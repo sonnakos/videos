@@ -4,8 +4,8 @@ Egyoldalas, statikus portfólió: **egy nyomtatott magazin, amiben mozognak a k�
 Nincs build-lépés, framework, npm-függőség vagy CDN: `index.html` + `styles.css` + `main.js` (+ `js/` modulok),
 `assets/`, `fonts/`. Minden útvonal relatív, így bármilyen statikus tárhelyre feltölthető (Vercel, Cloudflare Pages).
 
-> **Állapot: DRAFT.** A galéria, a REEL-betűk, a portré és a „About” fotó most **helykitöltő** anyag
-> (a képkockákon ott a `PLACEHOLDER FOOTAGE` felirat, és az oldal bal alsó sarkában a `DRAFT · PLACEHOLDER FOOTAGE` jelzés).
+> **Állapot: DRAFT.** A galéria, a címlap-videó, a portré és a „About” fotó most **helykitöltő** anyag
+> (a képkockákon ott a `PLACEHOLDER FOOTAGE` felirat, és az oldal bal alsó sarkában a `DRAFT · PLACEHOLDER CONTENT` jelzés).
 > A 11. szakasz (videó-lista) üresen érkezett, és a forrásfájlok Ákos gépén vannak. Lásd lent: **Mielőtt élesedik**.
 
 ## Helyi előnézet
@@ -26,12 +26,13 @@ node dev-server.mjs          # http://localhost:4174  (Range-kéréseket is kisz
 | `assets/clips`, `assets/posters`, `assets/full` | a `tools/clips.mjs` kimenete — kézzel nem kell hozzányúlni |
 | `assets/img`, `assets/og-image.jpg`, `assets/qr.svg` | portré, About-fotó, megosztási kép, QR |
 | `assets/tex/` | papírszemcse, filmszemcse (a sötét vetítéshez), raszterpontos terrakotta kör — `python3 -m pip install pillow && python3 tools/make-textures.py` |
+| `tools/masthead-path.txt` | a címlap SONNEVEND-felirata Anton-körvonalként (`tools/build-glyphs.py` rajzolja, így a lapfej nem vár a webfontra) |
 | `fonts/` | Anton, Archivo, Playfair Display, Caveat (woff2, helyből) + `glyphs.woff2` (→ ↗ ✓ ✕ ✳ saját rajzolású jelek, hogy iPhone-on se legyen belőlük emoji) |
 | `tools/` | klip-, kép-, QR- és ellenőrző szkriptek (lent) |
 
 ## Ami az egérre reagál
 
-- **REEL:** a felvétel finoman elcsúszik a betűk mögött az egér felé (csak `transform`, rAF-ben, és leáll, ha az egér nem mozog). Érintőképernyőn és csökkentett mozgásnál kikapcsol.
+- **Címlap:** a reel finoman elcsúszik a kereten belül az egér felé (csak `transform`, rAF-ben, és leáll, ha az egér nem mozog). Érintőképernyőn és csökkentett mozgásnál kikapcsol. Alatta futó SMPTE-időkód (25 fps), képkockánként frissül.
 - **Kontaktlap:** a kiválasztott képkockát (hover vagy billentyűs fókusz) piros zsírkréta-karika keríti be — ahogy a fotós bekarikázza a kontaktlapon, amit nagyítani akar. Három kézzel rajzolt változat, képkockánként rögzített dőléssel.
 - **Fejléc:** a ✳ egy nyolcadot fordul hoverre.
 
@@ -82,7 +83,7 @@ node tools/clips.mjs --dry-run    # csak kiírja az ffmpeg-parancsokat
 Loop-klip: H.264, hang nélkül (audiosáv törölve), faststart, hosszabb oldal max. 1280 px + 720 px-es mobilváltozat,
 poszter az első kockából (WebP). CRF 26; ha 1,5 MB fölé menne, magától CRF 28-cal újrakódol. Kisebb forrást nem nagyít fel.
 Teljes videó: max. 1920 px, CRF 23, legfeljebb 3 Mbit/s — egy 60–90 mp-es film így 25 MiB körül marad (a Cloudflare Pages ennél nagyobb fájlt nem fogad; a szkript szól, ha túllépi).
-A REEL mögötti klipet a `hero` blokk adja: **fekvő**, mozgalmas, nagy kontrasztú felvétel legyen (nem beszélő fej).
+A címlap-videót a `hero` blokk adja: **fekvő** (16:9), mozgalmas felvétel legyen (nem beszélő fej) — a `clips.mjs` az `index.html`-ben a kerete méretét is hozzáigazítja.
 
 A helykitöltőket így gyártottam (a `.placeholder-src/` nincs verziókezelve):
 
@@ -140,7 +141,7 @@ Cloudflare Pages: build parancs nélkül, de **csak ezeket** töltsd fel: `index
 
 - [ ] `content/projects.json`: 8–12 valódi projekt, ebből 2–3 `featured` + `full` — a helykitöltők törlése (ekkor eltűnik a DRAFT jelzés)
 - [ ] ügyfél-engedély minden ügyfélmunkára (OOM, Geri, VIA, …) és a DR1VN/futóklub arcaira → `cleared`
-- [ ] `hero`: fekvő klip a REEL-betűk mögé
+- [ ] `hero`: fekvő (16:9) klip a címlapra — a showreeled legerősebb 4–6 másodperce
 - [ ] a kapcsolat előtti piros blokk klipje: alapból az első kiemelt projekt utolsó klipje; másikat a `projects.json` tetején adhatsz meg: `"bandClip": "<slug>:<klip sorszáma 0-tól>"`
 - [ ] portré + About-fotó (`tools/images.mjs`), megosztási kép (`og`)
 - [ ] kapcsolat: e-mail, Instagram, LinkedIn és a START A PROJECT gomb e-mailje az `index.html`-ben (most `hello@example.com` / `@handle` helykitöltő — a DRAFT jelzés addig kint marad, és a `verify.mjs` is kiírja)

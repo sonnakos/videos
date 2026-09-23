@@ -1,4 +1,4 @@
-// Page chrome: header hairline, the REEL mask check, copy-link, band clip, draft badge.
+// Page chrome: header hairline, the cover, copy-link, band clip, draft badge.
 import { $, reducedMotion } from './util.js';
 import { register } from './playback.js';
 import { activate, tileEl } from './gallery.js';
@@ -13,40 +13,39 @@ export function initHeader() {
   new IntersectionObserver(([e]) => header.classList.toggle('is-scrolled', !e.isIntersecting)).observe(sentinel);
 }
 
-// REEL: video behind a paper sheet with the letters cut out. If SVG masking is
-// unavailable, fall back to solid terracotta type rather than a bare rectangle of video.
-export function initHero() {
-  const reel = $('#hero-reel');
-  const video = $('video', reel);
-  const masked = typeof SVGMaskElement === 'function' && getComputedStyle($('.hero-reel__cut', reel)).display !== 'none';
-  if (!masked) {
-    reel.classList.add('hero-reel--fallback');
-    return;
-  }
+// The cover: the reel plays as the cover picture (through the playback pool), drifts a
+// little with the pointer, and a SMPTE timecode under it counts the frames.
+export function initCover() {
+  const figure = $('#cover-reel');
+  const video = $('video', figure);
   register(video, 'page');
-  matchGrain(reel);
-  drift(reel, video);
+  drift($('.cover'), figure, video);
+  timecode(video, $('#cover-tc'));
 }
 
-// the sheet is drawn in viewBox units (1000 wide); size its grain tile so it lands
-// at the same 256 CSS px as the page's paper grain, whatever the screen width
-function matchGrain(reel) {
-  const pattern = $('#reel-grain');
-  const image = $('image', pattern);
-  const fit = () => {
-    const size = String((256 * 1000) / (reel.clientWidth || 1000));
-    for (const el of [pattern, image]) { el.setAttribute('width', size); el.setAttribute('height', size); }
+// HH:MM:SS:FF at 25 fps (PAL, what Ákos shoots). Updated once per presented video frame
+// where the browser offers requestVideoFrameCallback, otherwise on timeupdate.
+function timecode(video, out) {
+  const FPS = 25;
+  const two = (n) => String(n).padStart(2, '0');
+  const show = (t) => {
+    const f = Math.floor(t * FPS);
+    out.textContent = `${two(Math.floor(f / (3600 * FPS)))}:${two(Math.floor(f / (60 * FPS)) % 60)}:${two(Math.floor(f / FPS) % 60)}:${two(f % FPS)}`;
   };
-  fit();
-  new ResizeObserver(fit).observe(reel);
+  if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
+    const tick = (_, meta) => { show(meta.mediaTime); video.requestVideoFrameCallback(tick); };
+    video.requestVideoFrameCallback(tick);
+  } else {
+    video.addEventListener('timeupdate', () => show(video.currentTime));
+  }
 }
 
-// Pointer drift: the footage slides a little behind the letters, as if REEL were a
-// window. Transform only, eased in rAF, idle when the pointer rests; mouse/trackpad only.
-function drift(reel, video) {
+// Pointer drift: the footage slides a little inside its frame toward the pointer.
+// Transform only, eased in rAF, idle when the pointer rests; mouse/trackpad only.
+function drift(area, figure, video) {
   const fine = matchMedia('(hover: hover) and (pointer: fine)');
   if (!fine.matches || reducedMotion.matches) return;
-  reel.classList.add('hero-reel--drift');
+  figure.classList.add('cover__reel--drift');
   const RANGE = 1.8; // % of the frame; the 1.06 overscan leaves 3% to spare
   let tx = 0, ty = 0, x = 0, y = 0, raf = 0;
   const step = () => {
@@ -56,19 +55,27 @@ function drift(reel, video) {
     raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.002 ? requestAnimationFrame(step) : 0;
   };
   const aim = (nx, ny) => { tx = nx; ty = ny; if (!raf) raf = requestAnimationFrame(step); };
-  reel.addEventListener('pointermove', (e) => {
+  area.addEventListener('pointermove', (e) => {
     if (e.pointerType !== 'mouse' || reducedMotion.matches) return;
-    const r = reel.getBoundingClientRect();
-    aim(-((e.clientX - r.left) / r.width - 0.5) * 2, -((e.clientY - r.top) / r.height - 0.5) * 2);
+    const r = figure.getBoundingClientRect();
+    const cx = Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width - 0.5) * 2));
+    const cy = Math.max(-1, Math.min(1, ((e.clientY - r.top) / r.height - 0.5) * 2));
+    aim(-cx, -cy);
   });
-  reel.addEventListener('pointerleave', () => aim(0, 0));
+  area.addEventListener('pointerleave', () => aim(0, 0));
   reducedMotion.addEventListener('change', () => {
     if (!reducedMotion.matches) return;
     cancelAnimationFrame(raf);
     raf = 0;
-    reel.classList.remove('hero-reel--drift');
+    figure.classList.remove('cover__reel--drift');
     video.style.transform = '';
   });
+}
+
+// the cover line counts the frames actually on the sheet
+export function setCoverCount(n) {
+  const el = $('#cover-count');
+  if (el && n) el.textContent = String(n);
 }
 
 export function initCopyLink() {

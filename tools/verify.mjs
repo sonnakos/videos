@@ -224,15 +224,16 @@ const desk = await newPage('desktop', { viewport: { width: 1440, height: 900 } }
   gate('5a', 'desktop screenshot 1440×900 (hero)', true, 'qa-report/desktop-hero.png');
 
   const heroMoves = await page.evaluate(async () => {
-    const v = document.querySelector('.hero-reel video');
+    const v = document.querySelector('.cover__video');
+    const tc = document.querySelector('#cover-tc').textContent;
     const a = v.currentTime; await new Promise((r) => setTimeout(r, 600));
-    return { playing: !v.paused, advanced: +(v.currentTime - a).toFixed(2), fallback: document.querySelector('#hero-reel').classList.contains('hero-reel--fallback') };
+    return { playing: !v.paused, advanced: +(v.currentTime - a).toFixed(2), timecode: [tc, document.querySelector('#cover-tc').textContent] };
   });
-  gate('5b', 'REEL: video moves inside the letters', heroMoves.playing && heroMoves.advanced > 0.2 && !heroMoves.fallback, heroMoves);
-  await page.mouse.move(150, 200);
+  gate('5b', 'cover: the reel plays and the timecode runs', heroMoves.playing && heroMoves.advanced > 0.2 && heroMoves.timecode[0] !== heroMoves.timecode[1], heroMoves);
+  await page.mouse.move(150, 500);
   await page.waitForTimeout(900);
-  const drift = await page.evaluate(() => document.querySelector('.hero-reel__video').style.transform);
-  gate('H1', 'REEL: footage drifts behind the letters with the mouse (transform only)', /translate3d\((?!0%, 0%)/.test(drift), drift);
+  const drift = await page.evaluate(() => document.querySelector('.cover__video').style.transform);
+  gate('H1', 'cover: footage drifts inside its frame with the mouse (transform only)', /translate3d\((?!0%, 0%)/.test(drift), drift);
   await page.mouse.move(720, 20);
 
   const maxPlaying = await scrollThrough(page, true);
@@ -481,11 +482,11 @@ const desk = await newPage('desktop', { viewport: { width: 1440, height: 900 } }
   const anim = await page.evaluate(() => ({
     stamp: getComputedStyle(document.querySelector('.stamp svg')).animationName,
     marquee: getComputedStyle(document.querySelector('.marquee__track')).animationName,
-    drift: document.querySelector('.hero-reel__video').style.transform || 'none',
+    drift: document.querySelector('.cover__video').style.transform || 'none',
   }));
   await scrollToSel(page, '#sheet', 100);
   await page.screenshot({ path: join(OUT, 'reduced-motion-gallery.png') });
-  gate(10, 'reduced motion: no video plays, posters show, frames visible, stamp + marquee + REEL drift still', max === 0 && posters.withPoster === posters.inView && posters.inView > 0 && posters.tilesVisible && anim.stamp === 'none' && anim.marquee === 'none' && anim.drift === 'none', { maxPlaying: max, ...posters, ...anim });
+  gate(10, 'reduced motion: no video plays, posters show, frames visible, stamp + marquee + cover drift still', max === 0 && posters.withPoster === posters.inView && posters.inView > 0 && posters.tilesVisible && anim.stamp === 'none' && anim.marquee === 'none' && anim.drift === 'none', { maxPlaying: max, ...posters, ...anim });
 }
 
 // ------------------------------------------------------------ 3 + 4
@@ -503,7 +504,7 @@ if (/@handle|linkedin\.com\/in\/…|href="https:\/\/www\.(instagram|linkedin)\.c
 if (/\.example\//.test(html)) left.push('SITE_URL (canonical, og:*, QR) — run tools/set-url.mjs');
 const ph = site.projects.filter((p) => p.placeholder).length;
 if (ph) left.push(`${ph} placeholder projects in content/projects.json`);
-if (site.hero?.placeholder) left.push('placeholder REEL clip');
+if (site.hero?.placeholder) left.push('placeholder cover reel');
 for (const l of left) console.log(`note  still a placeholder: ${l}`);
 writeFileSync(join(OUT, 'report.json'), JSON.stringify({ base: BASE, h264Shim: useShim, results }, null, 2));
 const failed = results.filter((r) => !r.pass);

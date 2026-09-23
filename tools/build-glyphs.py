@@ -107,33 +107,32 @@ out = ROOT / 'fonts' / 'glyphs.woff2'
 fb.save(str(out))
 print('wrote', out.relative_to(ROOT), out.stat().st_size, 'bytes')
 
-# ---- REEL outline for the hero mask ------------------------------------------
-anton = TTFont(str(ROOT / 'fonts' / 'anton-latin.woff2'))
-cmap, gs, hmtx = anton.getBestCmap(), anton.getGlyphSet(), anton['hmtx']
-upm = anton['head'].unitsPerEm
-TRACK = -0.02 * upm                       # letter-spacing: -0.02em, as in the display spec
-word = 'REEL'
-names = [cmap[ord(c)] for c in word]
-xs, x = [], 0
-for i, n in enumerate(names):
-    xs.append(x)
-    x += hmtx[n][0] + (TRACK if i < len(names) - 1 else 0)
-bp = BoundsPen(gs)
-for n, ox in zip(names, xs):
-    gs[n].draw(TransformPen(bp, (1, 0, 0, 1, ox, 0)))
-xmin, ymin, xmax, ymax = bp.bounds
-VIEW_W, BLEED = 1000, 0.018               # letters overshoot each viewport edge by 1.8 %
-ink_w = VIEW_W * (1 + 2 * BLEED)
-s = ink_w / (xmax - xmin)
-cap = (ymax - ymin) * s
-PAD_T, PAD_B = round(cap * 0.03), round(cap * 0.03)
-VIEW_H = round(cap + PAD_T + PAD_B)
-spen = SVGPathPen(gs, ntos=lambda v: ('%.1f' % v).rstrip('0').rstrip('.'))
-for n, ox in zip(names, xs):
-    # font units -> viewBox units, y flipped, left ink edge at -BLEED*VIEW_W
-    t = (s, 0, 0, -s, (ox - xmin) * s - BLEED * VIEW_W, ymax * s + PAD_T)
-    gs[n].draw(TransformPen(spen, t))
-d = spen.getCommands()
-(ROOT / 'assets').mkdir(exist_ok=True)
-(ROOT / 'tools' / 'reel-path.txt').write_text(f'viewBox 0 0 {VIEW_W} {VIEW_H}\n{d}\n')
-print(f'REEL viewBox 0 0 {VIEW_W} {VIEW_H}  path {len(d)} chars  cap {cap:.1f}')
+# ---- masthead outline (SONNEVEND, edge to edge) ---------------------------------
+def outline(word, view_w=1000, bleed=0.012, pad=0.0):
+    """Anton outlines for `word`, scaled so the ink runs `bleed` past both edges of a
+    view_w-wide viewBox. Returns (view_h, path d)."""
+    anton = TTFont(str(ROOT / 'fonts' / 'anton-latin.woff2'))
+    cmap, gs, hmtx = anton.getBestCmap(), anton.getGlyphSet(), anton['hmtx']
+    track = -0.02 * anton['head'].unitsPerEm      # letter-spacing: -0.02em, as in the display spec
+    names = [cmap[ord(c)] for c in word]
+    xs, x = [], 0
+    for i, n in enumerate(names):
+        xs.append(x)
+        x += hmtx[n][0] + (track if i < len(names) - 1 else 0)
+    bp = BoundsPen(gs)
+    for n, ox in zip(names, xs):
+        gs[n].draw(TransformPen(bp, (1, 0, 0, 1, ox, 0)))
+    xmin, ymin, xmax, ymax = bp.bounds
+    s = view_w * (1 + 2 * bleed) / (xmax - xmin)
+    cap = (ymax - ymin) * s
+    top = round(cap * pad, 1)
+    view_h = round(cap + 2 * top)
+    spen = SVGPathPen(gs, ntos=lambda v: ('%.1f' % v).rstrip('0').rstrip('.'))
+    for n, ox in zip(names, xs):
+        gs[n].draw(TransformPen(spen, (s, 0, 0, -s, (ox - xmin) * s - bleed * view_w, ymax * s + top)))
+    return view_h, spen.getCommands()
+
+
+h, d = outline('SONNEVEND')
+(ROOT / 'tools' / 'masthead-path.txt').write_text(f'viewBox 0 0 1000 {h}\n{d}\n')
+print(f'SONNEVEND viewBox 0 0 1000 {h}  path {len(d)} chars')

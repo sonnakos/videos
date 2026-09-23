@@ -169,7 +169,7 @@ for (const p of data.projects) {
   if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(p.slug || '')) problems.push(`${at}: slug must be lowercase letters, digits and dashes`);
   if (slugs.has(p.slug)) problems.push(`${at}: slug used twice`);
   slugs.add(p.slug);
-  if (p.slug === 'hero') problems.push('"hero" is reserved for the REEL clip');
+  if (p.slug === 'hero') problems.push('"hero" is reserved for the cover reel');
   if (p.cleared === false) continue;
   if (!p.name) problems.push(`${at}: "name" is missing`);
   if (!Array.isArray(p.clips) || !p.clips.length) problems.push(`${at}: "clips" needs at least one range`);
@@ -246,14 +246,14 @@ function unpublish(slug) {
 }
 
 try {
-  // hero (landscape clip behind the REEL letters)
+  // hero (the landscape reel on the cover)
   if (data.hero?.source && (!ONLY || ONLY.includes('hero'))) {
     try {
       const src = resolveSource(data.hero.source, data.sourceDir);
       if (!existsSync(src)) throw new Error(`source not found: ${src}`);
       console.log('hero');
       const { w, h } = probe(src);
-      if (h > w) warn('hero clip is portrait — the REEL mask is a wide band, use a landscape clip');
+      if (h > w) warn('hero clip is portrait — the cover frame is landscape, use a landscape clip');
       const [clip] = makeLoopSet('hero', src, data.hero.source, [data.hero.range], data.hero.media ? [data.hero.media] : []);
       if (clip) data.hero.media = clip;
     } catch (e) { failures.push(`hero: ${e.message}`); }
@@ -329,11 +329,19 @@ function writeOutputs() {
   };
   writeFileSync(SITE, JSON.stringify(site, null, 2) + '\n');
 
-  // reserve the band clip's box in index.html so the contact section doesn't jump when it loads
-  const band = pickBand(projects, data.bandClip);
-  if (band && existsSync(HTML)) {
+  // keep index.html's reserved boxes in step with the real clips, so nothing jumps on load:
+  // the cover reel's width/height, and the band clip's aspect ratio
+  if (existsSync(HTML)) {
     const html = readFileSync(HTML, 'utf8');
-    const next = html.replace(/<div class="band__clip" id="band-clip"[^>]*>/, `<div class="band__clip" id="band-clip" style="--ar: ${band.w} / ${band.h}">`);
+    let next = html;
+    const hero = data.hero?.media;
+    if (hero) {
+      next = next.replace(/(<video class="cover__video"[^>]*?)\swidth="\d+"\sheight="\d+"/, `$1 width="${hero.w}" height="${hero.h}"`);
+    }
+    const band = pickBand(projects, data.bandClip);
+    if (band) {
+      next = next.replace(/<div class="band__clip" id="band-clip"[^>]*>/, `<div class="band__clip" id="band-clip" style="--ar: ${band.w} / ${band.h}">`);
+    }
     if (next !== html) writeFileSync(HTML, next);
   }
 

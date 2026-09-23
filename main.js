@@ -4,15 +4,15 @@
 //   data.js      reads content/projects.json (written by tools/clips.mjs)
 //   gallery.js   the contact sheet
 //   world.js     the full-screen project world
-//   ui.js        header, REEL mask check, copy link, band clip, draft badge
+//   ui.js        header, cover (reel, drift, timecode), copy link, band clip, draft badge
 import { $ } from './js/util.js';
 import { loadProjects } from './js/data.js';
 import { renderGallery } from './js/gallery.js';
 import { initWorld } from './js/world.js';
-import { initCopyLink, initHeader, initHero, renderBand, showDraftBadge } from './js/ui.js';
+import { initCopyLink, initCover, initHeader, renderBand, setCoverCount, showDraftBadge } from './js/ui.js';
 
 initHeader();
-initHero();
+initCover();
 initCopyLink();
 
 // The gallery arrives after a fetch, so the browser's own scroll restoration on reload
@@ -32,7 +32,7 @@ addEventListener('pagehide', () => {
 
 try {
   const { data, projects } = await loadProjects();
-  renderGallery($('#sheet'), projects);
+  setCoverCount(renderGallery($('#sheet'), projects));
   renderBand(projects, data);
   initWorld(projects);
   showDraftBadge(projects, data);
