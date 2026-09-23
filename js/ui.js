@@ -23,7 +23,7 @@ export function initCover() {
   timecode(video, $('#cover-tc'));
 }
 
-// HH:MM:SS:FF at 25 fps (PAL, what Ákos shoots). Updated once per presented video frame
+// HH:MM:SS:FF at 25 fps. Updated once per presented video frame
 // where the browser offers requestVideoFrameCallback, otherwise on timeupdate.
 function timecode(video, out) {
   const FPS = 25;
@@ -70,12 +70,6 @@ function drift(area, figure, video) {
     figure.classList.remove('cover__reel--drift');
     video.style.transform = '';
   });
-}
-
-// the cover line counts the frames actually on the sheet
-export function setCoverCount(n) {
-  const el = $('#cover-count');
-  if (el && n) el.textContent = String(n);
 }
 
 export function initCopyLink() {

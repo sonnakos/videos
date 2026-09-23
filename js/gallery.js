@@ -147,5 +147,4 @@ export function renderGallery(sheet, projects) {
   }).observe(sheet);
 
   for (const tile of sheet.querySelectorAll('.tile')) activate(tile);
-  return order.length;
 }

@@ -9,7 +9,7 @@ import { $ } from './js/util.js';
 import { loadProjects } from './js/data.js';
 import { renderGallery } from './js/gallery.js';
 import { initWorld } from './js/world.js';
-import { initCopyLink, initCover, initHeader, renderBand, setCoverCount, showDraftBadge } from './js/ui.js';
+import { initCopyLink, initCover, initHeader, renderBand, showDraftBadge } from './js/ui.js';
 
 initHeader();
 initCover();
@@ -32,7 +32,7 @@ addEventListener('pagehide', () => {
 
 try {
   const { data, projects } = await loadProjects();
-  setCoverCount(renderGallery($('#sheet'), projects));
+  renderGallery($('#sheet'), projects);
   renderBand(projects, data);
   initWorld(projects);
   showDraftBadge(projects, data);

@@ -26,7 +26,6 @@ node dev-server.mjs          # http://localhost:4174  (Range-kéréseket is kisz
 | `assets/clips`, `assets/posters`, `assets/full` | a `tools/clips.mjs` kimenete — kézzel nem kell hozzányúlni |
 | `assets/img`, `assets/og-image.jpg`, `assets/qr.svg` | portré, About-fotó, megosztási kép, QR |
 | `assets/tex/` | papírszemcse, filmszemcse (a sötét vetítéshez), raszterpontos terrakotta kör — `python3 -m pip install pillow && python3 tools/make-textures.py` |
-| `tools/masthead-path.txt` | a címlap SONNEVEND-felirata Anton-körvonalként (`tools/build-glyphs.py` rajzolja, így a lapfej nem vár a webfontra) |
 | `fonts/` | Anton, Archivo, Playfair Display, Caveat (woff2, helyből) + `glyphs.woff2` (→ ↗ ✓ ✕ ✳ saját rajzolású jelek, hogy iPhone-on se legyen belőlük emoji) |
 | `tools/` | klip-, kép-, QR- és ellenőrző szkriptek (lent) |
 
@@ -54,7 +53,7 @@ A szemcse csak a papíron és a sötét vetítésen van, a videók fölött ninc
   "cleared": true,
   "accent": "auto",
   "whatIDid": "Edit, colour grade, motion graphics",
-  "tools": "DaVinci Resolve, Sony A7, DJI Mini",
+  "tools": "<szoftver, kamera>",
   "turnaround": "4 days",
   "summary": "Egy mondat: mit oldott meg ez a videó a megrendelőnek.",
   "source": "OOM FINAL 1.mov",
@@ -145,5 +144,5 @@ Cloudflare Pages: build parancs nélkül, de **csak ezeket** töltsd fel: `index
 - [ ] a kapcsolat előtti piros blokk klipje: alapból az első kiemelt projekt utolsó klipje; másikat a `projects.json` tetején adhatsz meg: `"bandClip": "<slug>:<klip sorszáma 0-tól>"`
 - [ ] portré + About-fotó (`tools/images.mjs`), megosztási kép (`og`)
 - [ ] kapcsolat: e-mail, Instagram, LinkedIn és a START A PROJECT gomb e-mailje az `index.html`-ben (most `hello@example.com` / `@handle` helykitöltő — a DRAFT jelzés addig kint marad, és a `verify.mjs` is kiírja)
-- [ ] az About-szöveg és a hero-leírás az én megfogalmazásom a brief tényeiből — javítsd, ha nem a te hangod
+- [ ] a bemutatkozó mondat („Every second has to earn the next.”), a hero-leírás és az About-szöveg vázlat: szándékosan nincs benne évszám, felszerelés, lakóhely vagy tagszám — írd át a saját hangodra, és csak igaz adat kerüljön bele
 - [ ] végleges cím → `tools/set-url.mjs`

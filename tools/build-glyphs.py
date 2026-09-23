@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-"""Builds fonts/glyphs.woff2 (the five symbols the Google fonts lack) and the
-outlined REEL path used by the hero mask.
+"""Builds fonts/glyphs.woff2 (the five symbols the Google fonts lack).
 
 Why: Anton / Archivo / Playfair / Caveat have no -> , arrow NE, check, cross or
 eight-spoked asterisk. Without our own glyphs the browser falls back to a system
-font per OS, and on iOS U+2733 can come out as a green emoji. The REEL mask is
-outlined from Anton so it never depends on webfont timing.
+font per OS, and on iOS U+2733 can come out as a green emoji.
 
 Needs: python3 -m pip install fonttools brotli
 Run:   python3 tools/build-glyphs.py
@@ -13,10 +11,6 @@ Run:   python3 tools/build-glyphs.py
 import math, pathlib
 from fontTools.fontBuilder import FontBuilder
 from fontTools.pens.ttGlyphPen import TTGlyphPen
-from fontTools.ttLib import TTFont
-from fontTools.pens.svgPathPen import SVGPathPen
-from fontTools.pens.transformPen import TransformPen
-from fontTools.pens.boundsPen import BoundsPen
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 UPM, AXIS, STEM = 1000, 300, 84          # AXIS = vertical centre (Archivo maths axis)
@@ -106,33 +100,3 @@ fb.font.flavor = 'woff2'
 out = ROOT / 'fonts' / 'glyphs.woff2'
 fb.save(str(out))
 print('wrote', out.relative_to(ROOT), out.stat().st_size, 'bytes')
-
-# ---- masthead outline (SONNEVEND, edge to edge) ---------------------------------
-def outline(word, view_w=1000, bleed=0.012, pad=0.0):
-    """Anton outlines for `word`, scaled so the ink runs `bleed` past both edges of a
-    view_w-wide viewBox. Returns (view_h, path d)."""
-    anton = TTFont(str(ROOT / 'fonts' / 'anton-latin.woff2'))
-    cmap, gs, hmtx = anton.getBestCmap(), anton.getGlyphSet(), anton['hmtx']
-    track = -0.02 * anton['head'].unitsPerEm      # letter-spacing: -0.02em, as in the display spec
-    names = [cmap[ord(c)] for c in word]
-    xs, x = [], 0
-    for i, n in enumerate(names):
-        xs.append(x)
-        x += hmtx[n][0] + (track if i < len(names) - 1 else 0)
-    bp = BoundsPen(gs)
-    for n, ox in zip(names, xs):
-        gs[n].draw(TransformPen(bp, (1, 0, 0, 1, ox, 0)))
-    xmin, ymin, xmax, ymax = bp.bounds
-    s = view_w * (1 + 2 * bleed) / (xmax - xmin)
-    cap = (ymax - ymin) * s
-    top = round(cap * pad, 1)
-    view_h = round(cap + 2 * top)
-    spen = SVGPathPen(gs, ntos=lambda v: ('%.1f' % v).rstrip('0').rstrip('.'))
-    for n, ox in zip(names, xs):
-        gs[n].draw(TransformPen(spen, (s, 0, 0, -s, (ox - xmin) * s - bleed * view_w, ymax * s + top)))
-    return view_h, spen.getCommands()
-
-
-h, d = outline('SONNEVEND')
-(ROOT / 'tools' / 'masthead-path.txt').write_text(f'viewBox 0 0 1000 {h}\n{d}\n')
-print(f'SONNEVEND viewBox 0 0 1000 {h}  path {len(d)} chars')
