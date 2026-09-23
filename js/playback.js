@@ -6,18 +6,28 @@
 import { reducedMotion } from './util.js';
 
 const MAX_PLAYING = 6;
-const entries = new Map(); // video -> { group, near }
+const entries = new Map(); // video -> { group, near, io }
 const suspended = new Set();
 let queued = false;
 let lastScroll = 0;
+let trailing = 0;
 
-const io = new IntersectionObserver((list) => {
+function onIntersect(list) {
   for (const e of list) {
     const entry = entries.get(e.target);
     if (entry) entry.near = e.isIntersecting;
   }
   schedule();
-}, { rootMargin: '200px' });
+}
+// one observer for the page; one per scroll container (the project world scrolls on its own,
+// and a root margin only reaches past the viewport when the container itself is the root)
+const pageIO = new IntersectionObserver(onIntersect, { rootMargin: '200px' });
+const containerIO = new Map();
+function observerFor(root) {
+  if (!root) return pageIO;
+  if (!containerIO.has(root)) containerIO.set(root, new IntersectionObserver(onIntersect, { root, rootMargin: '200px 0px' }));
+  return containerIO.get(root);
+}
 
 function schedule() {
   if (queued) return;
@@ -51,15 +61,16 @@ function update() {
   for (const v of keep) start(v);
 }
 
-export function register(video, group = 'page') {
+export function register(video, group = 'page', root = null) {
   video.muted = true;       // property as well as attribute: Safari only autoplays when both say muted
   video.playsInline = true;
-  entries.set(video, { group, near: false });
+  const io = observerFor(root);
+  entries.set(video, { group, near: false, io });
   io.observe(video);
 }
 
 export function unregister(video) {
-  io.unobserve(video);
+  entries.get(video)?.io.unobserve(video);
   entries.delete(video);
   if (!video.paused) video.pause();
 }
@@ -80,12 +91,17 @@ reducedMotion.addEventListener('change', () => {
 });
 document.addEventListener('visibilitychange', update);
 addEventListener('resize', schedule, { passive: true });
-// distances to the centre change while scrolling even when nothing crosses the 200px line
-addEventListener('scroll', () => {
+// distances to the centre change while scrolling even when nothing crosses the 200px line:
+// re-rank at most every 150 ms while scrolling, and once more after it stops
+// (the trailing call covers browsers without the scrollend event)
+function onScroll() {
   const now = performance.now();
   if (now - lastScroll > 150) {
     lastScroll = now;
     schedule();
   }
-}, { passive: true });
-addEventListener('scrollend', schedule, { passive: true });
+  clearTimeout(trailing);
+  trailing = setTimeout(schedule, 160);
+}
+addEventListener('scroll', onScroll, { passive: true, capture: true }); // capture also sees the project world's scroller
+addEventListener('scrollend', schedule, { passive: true, capture: true });

@@ -21,10 +21,11 @@ node dev-server.mjs          # http://localhost:4174  (Range-kéréseket is kisz
 | `index.html` | az oldal (fejléc, hero, galéria, rólam, kapcsolat, lábléc, projekt-világ) |
 | `styles.css` | tokenek (színek, betűk, rács), minden szakasz, mozgás, `prefers-reduced-motion` |
 | `main.js`, `js/*.js` | belépési pont + modulok: lejátszás-készlet (max. 6 videó), galéria, projekt-világ, UI |
-| `content/projects.json` | **az egyetlen tartalomfájl**: projektek, klip-tartományok, szövegek |
+| `content/projects.json` | **ezt szerkeszted**: projektek, forrásfájlok, klip-tartományok, szövegek — *nem kerül ki az oldalra* |
+| `content/site.json` | a `tools/clips.mjs` generálja belőle: csak az engedélyezett projektek, forrásútvonalak nélkül — **ezt olvassa az oldal** |
 | `assets/clips`, `assets/posters`, `assets/full` | a `tools/clips.mjs` kimenete — kézzel nem kell hozzányúlni |
 | `assets/img`, `assets/og-image.jpg`, `assets/qr.svg` | portré, About-fotó, megosztási kép, QR |
-| `assets/tex/` | papírszemcse, filmszemcse (a sötét vetítéshez), raszterpontos terrakotta kör — `python3 tools/make-textures.py` |
+| `assets/tex/` | papírszemcse, filmszemcse (a sötét vetítéshez), raszterpontos terrakotta kör — `python3 -m pip install pillow && python3 tools/make-textures.py` |
 | `fonts/` | Anton, Archivo, Playfair Display, Caveat (woff2, helyből) + `glyphs.woff2` (→ ↗ ✓ ✕ ✳ saját rajzolású jelek, hogy iPhone-on se legyen belőlük emoji) |
 | `tools/` | klip-, kép-, QR- és ellenőrző szkriptek (lent) |
 
@@ -66,8 +67,9 @@ A szemcse csak a papíron és a sötét vetítésen van, a videók fölött ninc
 - `featured: true` + `tiles: 2–3` → a projekt 2–3 csempét kap; a többi 1-et. 8–12 projektből így lesz 15–20 csempe.
 - `full`: csak a kiemelt 2–3 projektnél — `"0-"` az egész fájl, vagy `"12-95"`. Ez hanggal, kezelőgombokkal játszható.
 - `accent`: hex (`"#C4563A"`) vagy `"auto"` (a klip első kockájából számolja).
-- `cleared: false` → a projekt **nem kerül fel** (jogi kapu: ügyfél-engedély, felismerhető arcok).
+- `cleared: false` → a projekt **lekerül**: a `clips.mjs` törli a már legyártott klipjeit, posztereit, teljes videóját, és kihagyja a `site.json`-ból (jogi kapu: ügyfél-engedély, felismerhető arcok).
 - A `media` blokkot a szkript írja — ne szerkeszd.
+- A szkript előbb az egész fájlt ellenőrzi (slugok, tartományok, színek), és csak hibátlan fájlnál kezd kódolni. Ha kódolás közben egy projekt elhasal, a többi eredménye megmarad.
 
 3. Klipek, poszterek, teljes videók legyártása:
 
@@ -78,7 +80,8 @@ node tools/clips.mjs --dry-run    # csak kiírja az ffmpeg-parancsokat
 ```
 
 Loop-klip: H.264, hang nélkül (audiosáv törölve), faststart, hosszabb oldal max. 1280 px + 720 px-es mobilváltozat,
-poszter az első kockából (WebP). CRF 26; ha 1,5 MB fölé menne, magától CRF 28-cal újrakódol.
+poszter az első kockából (WebP). CRF 26; ha 1,5 MB fölé menne, magától CRF 28-cal újrakódol. Kisebb forrást nem nagyít fel.
+Teljes videó: max. 1920 px, CRF 23, legfeljebb 3 Mbit/s — egy 60–90 mp-es film így 25 MiB körül marad (a Cloudflare Pages ennél nagyobb fájlt nem fogad; a szkript szól, ha túllépi).
 A REEL mögötti klipet a `hero` blokk adja: **fekvő**, mozgalmas, nagy kontrasztú felvétel legyen (nem beszélő fej).
 
 A helykitöltőket így gyártottam (a `.placeholder-src/` nincs verziókezelve):
@@ -116,7 +119,7 @@ node tools/verify.mjs                  # elindítja a szervert és végigmegy mi
 BASE=https://… node tools/verify.mjs   # élesített példányon
 ```
 
-Playwright kell hozzá (`npm i -g playwright`; az oldalnak magának nincs npm-függősége). Screenshotok és
+Playwright kell hozzá: `npm i -g playwright && npx playwright install chromium` (az oldalnak magának nincs npm-függősége). *Itt a konténerben a Chromium előre telepítve volt, a `playwright install` lépést nem futtattam.* Screenshotok és
 `report.json` a `qa-report/` mappába. Ha a böngésző nem tud H.264-et (a Playwright saját Chromiuma ilyen),
 a szkript a teszt idejére VP9-másolatokat szolgál ki az `.mp4` kérésekre — a szállított fájlokhoz nem nyúl.
 Megjegyzés: `node --check main.js` Node 22-n **nem** jelez hibát ES-modul szintaxishibára; a szkript ezért
@@ -128,7 +131,10 @@ Megjegyzés: `node --check main.js` Node 22-n **nem** jelez hibát ES-modul szin
 npx vercel deploy --prod --yes     # a brief szerinti első kör — itt nem futtattam (nincs Vercel-hozzáférés a konténerben)
 ```
 
-Cloudflare Pages: ugyanez a mappa feltöltve, build parancs nélkül. Utána `node tools/set-url.mjs <új cím>`.
+A `.vercelignore` kihagyja a szerkesztő-oldali fájlokat (`content/projects.json`, `tools/`, README, dev-server), így
+a forrásfájl-nevek és a még nem engedélyezett projektek adatai nem kerülnek ki.
+Cloudflare Pages: build parancs nélkül, de **csak ezeket** töltsd fel: `index.html`, `styles.css`, `main.js`, `js/`,
+`fonts/`, `assets/`, `content/site.json`. Utána `node tools/set-url.mjs <új cím>`.
 
 ## Mielőtt élesedik
 
@@ -137,6 +143,6 @@ Cloudflare Pages: ugyanez a mappa feltöltve, build parancs nélkül. Utána `no
 - [ ] `hero`: fekvő klip a REEL-betűk mögé
 - [ ] a kapcsolat előtti piros blokk klipje: alapból az első kiemelt projekt utolsó klipje; másikat a `projects.json` tetején adhatsz meg: `"bandClip": "<slug>:<klip sorszáma 0-tól>"`
 - [ ] portré + About-fotó (`tools/images.mjs`), megosztási kép (`og`)
-- [ ] kapcsolat: e-mail, Instagram, LinkedIn az `index.html`-ben (most `hello@example.com` / `@handle` helykitöltő)
+- [ ] kapcsolat: e-mail, Instagram, LinkedIn és a START A PROJECT gomb e-mailje az `index.html`-ben (most `hello@example.com` / `@handle` helykitöltő — a DRAFT jelzés addig kint marad, és a `verify.mjs` is kiírja)
 - [ ] az About-szöveg és a hero-leírás az én megfogalmazásom a brief tényeiből — javítsd, ha nem a te hangod
 - [ ] végleges cím → `tools/set-url.mjs`

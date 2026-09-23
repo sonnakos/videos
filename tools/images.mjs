@@ -11,7 +11,7 @@
 // The share image is centre-cropped to 1200×630, as Open Graph requires.
 // Needs ffmpeg + ffprobe (macOS: brew install ffmpeg).
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -38,31 +38,38 @@ function ff(bin, args) {
 
 if (kind === 'og') {
   const out = join(ROOT, 'assets/og-image.jpg');
+  const tmp = out + '.tmp.jpg';
   const isVideo = /\.(mp4|mov|m4v|webm|mkv)$/i.test(input);
+  if (existsSync(tmp)) unlinkSync(tmp);
   ff('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', ...(isVideo ? ['-ss', at] : []), '-i', input,
     '-frames:v', '1', '-vf', 'scale=1200:630:force_original_aspect_ratio=increase,crop=1200:630',
-    '-q:v', '3', out]);
+    '-q:v', '3', '-f', 'image2', tmp]);
+  if (!existsSync(tmp)) {
+    console.error(`no frame at ${at} s — the clip is shorter than that; pick an earlier second`);
+    process.exit(1);
+  }
+  writeFileSync(out, readFileSync(tmp));
+  unlinkSync(tmp);
   console.log('wrote assets/og-image.jpg (1200×630)');
   process.exit(0);
 }
 
-// portrait / about: two widths, aspect kept, EXIF rotation applied by ffmpeg's autorotate
-const probe = JSON.parse(ff('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries',
-  'stream=width,height:stream_side_data=rotation', '-of', 'json', input])).streams[0];
-let { width: w, height: h } = probe;
-const rot = Math.abs(Number(probe.side_data_list?.find((d) => 'rotation' in d)?.rotation || 0));
-if (rot === 90 || rot === 270) [w, h] = [h, w];
-
-const sizes = [720, 1400];
-for (const size of sizes) {
+// portrait / about: two widths, aspect kept (ffmpeg applies EXIF rotation itself)
+const dims = (file) => {
+  const s = JSON.parse(ff('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=width,height', '-of', 'json', file])).streams[0];
+  return { w: s.width, h: s.height };
+};
+for (const size of [720, 1400]) {
   const out = join(ROOT, `assets/img/${kind}-${size}.webp`);
   ff('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-i', input, '-frames:v', '1',
     '-vf', `scale=w='min(${size},iw)':h=-2:flags=lanczos`, '-c:v', 'libwebp', '-quality', '82', out]);
   console.log(`wrote assets/img/${kind}-${size}.webp`);
 }
-const outW = Math.min(1400, w);
-const outH = Math.round((outW * h) / w / 2) * 2;
-const smallW = Math.min(720, w);
+// measure what was written rather than the source, so rotated phone photos get the right box
+const big = dims(join(ROOT, `assets/img/${kind}-1400.webp`));
+const outW = big.w;
+const outH = big.h;
+const smallW = dims(join(ROOT, `assets/img/${kind}-720.webp`)).w;
 
 // keep index.html's reserved box in step with the photo's real aspect ratio
 const html = join(ROOT, 'index.html');

@@ -1,0 +1,10 @@
+# Build-side files: never deploy them. The page reads content/site.json only.
+content/projects.json
+tools/
+README.md
+dev-server.mjs
+.placeholder-src/
+.qa-cache/
+qa-report/
+.gitignore
+.vercelignore

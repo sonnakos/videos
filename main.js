@@ -15,12 +15,30 @@ initHeader();
 initHero();
 initCopyLink();
 
+// The gallery arrives after a fetch, so the browser's own scroll restoration on reload
+// lands too high and scroll anchoring then drifts it into the next section. Keep the
+// position for this tab and put it back once the sheet exists.
+const KEY = 'scroll:' + location.pathname;
+const navType = performance.getEntriesByType('navigation')[0]?.type;
+let restore = null;
+try {
+  restore = Number(sessionStorage.getItem(KEY));
+  if (!Number.isFinite(restore)) restore = null;
+  history.scrollRestoration = 'manual';
+} catch {}
+addEventListener('pagehide', () => {
+  try { sessionStorage.setItem(KEY, String(Math.round(scrollY))); } catch {}
+});
+
 try {
   const { data, projects } = await loadProjects();
   renderGallery($('#sheet'), projects);
   renderBand(projects, data);
   initWorld(projects);
   showDraftBadge(projects, data);
+  if (restore && (navType === 'reload' || navType === 'back_forward') && !$('#pw').open) {
+    scrollTo({ top: restore, left: 0, behavior: 'instant' });
+  }
 } catch (err) {
   $('#sheet').insertAdjacentHTML('afterend', '<p class="work__noscript">The clips could not be loaded. Please reload the page.</p>');
   console.error(err);

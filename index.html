@@ -48,7 +48,7 @@
   <header class="site-header" id="site-header">
     <div class="site-header__in wrap">
       <a class="brand micro" href="#top"><svg class="ast" aria-hidden="true" focusable="false"><use href="#i-ast"/></svg>Sonnevend Ákos</a>
-      <a class="header-cta micro" href="#contact">Available for projects <span aria-hidden="true">→</span></a>
+      <a class="header-cta micro" href="#contact">Available<span class="opt"> for projects</span> <span aria-hidden="true">→</span></a>
     </div>
   </header>
 
@@ -93,7 +93,7 @@
           <p class="micro hero__hello">Hello, I’m</p>
           <p class="hero__name">Ákos Sonnevend</p>
           <p class="micro hero__role">Video editor &amp; content strategist</p>
-          <p class="hero__lede">I edit short-form, brand films and event coverage in DaVinci Resolve, shoot on my own Sony and DJI kit, and write my motion-graphics overlays in code. Cutting since 2019, from Herning, Denmark.</p>
+          <p class="hero__lede">I edit short-form, brand films and event coverage in DaVinci Resolve, shoot on my own Sony and DJI kit, and write my motion-graphics overlays in code. Editing since 2019; now based in Herning, Denmark.</p>
           <p class="hero__sign" aria-hidden="true">Ákos</p>
         </div>
 
@@ -123,7 +123,7 @@
         <header class="work__head">
           <h2 class="work__title display-xl" id="work-title"><span>Selected</span> <span class="terra">Work</span></h2>
           <div class="work__aside">
-            <p class="work__lede">A contact sheet of recent edits. Every frame is a live loop from the finished cut — open one for the full project.</p>
+            <p class="work__lede">Live loops from finished cuts — open any frame.</p>
             <p class="micro work__scroll">Scroll to explore <span aria-hidden="true">↓</span></p>
           </div>
         </header>
@@ -158,28 +158,28 @@
 
     <!-- ============================================================= CONTACT -->
     <section class="contact section" id="contact" aria-labelledby="contact-title">
-      <div class="wrap"><span class="sec-num" aria-hidden="true">003</span></div>
       <!-- colour block running to the right edge of the screen, one clip half inside it -->
       <div class="band">
-        <div class="band__clip" id="band-clip"></div>
+        <div class="band__clip" id="band-clip" style="--ar: 1280 / 720"></div>
       </div>
       <div class="wrap contact__grid">
+        <span class="sec-num" aria-hidden="true">003</span>
         <h2 class="contact__title display-xl" id="contact-title"><span>Let’s make</span> <span class="terra">something</span></h2>
 
         <div class="qr">
           <img class="qr__code" src="assets/qr.svg" width="200" height="200" alt="QR code that opens this page">
           <div class="qr__note">
-            <svg class="qr__arrow" viewBox="0 0 120 90" aria-hidden="true" focusable="false">
-              <path d="M112 80C96 84 70 80 55 62 42 47 44 26 30 16 22 10 12 10 6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
-              <path d="M16 4 5 13l13 5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg class="qr__arrow" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
+              <path d="M52 50C40 54 24 50 17 38 12 29 13 18 16 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M9 14 16 5l7 9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             <p class="micro">Scan to share this page</p>
             <button class="btn-line micro" type="button" id="copy-link">Copy link</button>
           </div>
         </div>
 
+        <!-- CONTACT: four placeholders to replace before publishing — the three links below and the START A PROJECT mailto -->
         <ul class="contact__list">
-          <!-- CONTACT: replace the three placeholders before publishing -->
           <li><span class="micro">Email</span><a href="mailto:hello@example.com">hello@example.com</a></li>
           <li><span class="micro">Instagram</span><a href="https://www.instagram.com/" rel="noopener">@handle</a></li>
           <li><span class="micro">LinkedIn</span><a href="https://www.linkedin.com/" rel="noopener">linkedin.com/in/…</a></li>
@@ -203,32 +203,32 @@
     </div>
   </footer>
 
-  <p class="draft-badge micro" id="draft-badge" hidden>Draft · placeholder footage</p>
+  <p class="draft-badge micro" id="draft-badge" hidden>Draft · placeholder content</p>
 
   <!-- ====================================================== PROJECT WORLD -->
   <dialog class="pw" id="pw" aria-labelledby="pw-title">
     <div class="pw__bg" aria-hidden="true"></div>
     <div class="pw__scroll" data-close-area>
       <div class="pw__inner wrap" data-close-area>
-        <header class="pw__head">
+        <div class="pw__head" data-close-area>
           <p class="pw__num" id="pw-num" aria-hidden="true"></p>
-          <div class="pw__heading">
+          <div class="pw__heading" data-close-area>
             <p class="micro pw__cat" id="pw-cat"></p>
             <h2 class="pw__title display-l" id="pw-title" tabindex="-1"></h2>
           </div>
-        </header>
+        </div>
         <div class="pw__clips" id="pw-clips" data-close-area></div>
         <figure class="pw__full" id="pw-full" hidden>
           <video controls playsinline preload="none"></video>
           <figcaption class="micro" id="pw-full-cap"></figcaption>
         </figure>
         <dl class="pw__facts">
-          <div><dt class="micro">What I did</dt><dd id="pw-did"></dd></div>
-          <div><dt class="micro">Tools</dt><dd id="pw-tools"></dd></div>
-          <div><dt class="micro">Turnaround</dt><dd id="pw-turn"></dd></div>
+          <div data-close-area><dt class="micro">What I did</dt><dd id="pw-did"></dd></div>
+          <div data-close-area><dt class="micro">Tools</dt><dd id="pw-tools"></dd></div>
+          <div data-close-area><dt class="micro">Turnaround</dt><dd id="pw-turn"></dd></div>
         </dl>
         <p class="pw__summary" id="pw-summary"></p>
-        <div class="pw__foot">
+        <div class="pw__foot" data-close-area>
           <button class="btn-line btn-line--stage micro" type="button" id="pw-next">Next project <span aria-hidden="true">→</span></button>
         </div>
       </div>

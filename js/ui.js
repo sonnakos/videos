@@ -78,12 +78,13 @@ export function initCopyLink() {
   let timer;
   btn.setAttribute('aria-live', 'polite');
   btn.addEventListener('click', async () => {
-    const url = location.href.split('#')[0];
+    const url = location.origin + location.pathname; // the page itself: no tracking query, no #fragment
     let ok = false;
     try {
       await navigator.clipboard.writeText(url);
       ok = true;
     } catch {
+      const prev = document.activeElement;
       const ta = Object.assign(document.createElement('textarea'), { value: url });
       ta.setAttribute('readonly', '');
       ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
@@ -91,6 +92,7 @@ export function initCopyLink() {
       ta.select();
       try { ok = document.execCommand('copy'); } catch { ok = false; }
       ta.remove();
+      prev?.focus({ preventScroll: true });
     }
     btn.textContent = ok ? 'Copied ✓' : url;
     clearTimeout(timer);
@@ -115,7 +117,10 @@ export function renderBand(projects, data) {
   activate(tile);
 }
 
+// the badge stays until every placeholder is gone: footage, the REEL clip and the contact links
 export function showDraftBadge(projects, data) {
-  const draft = projects.some((p) => p.placeholder) || data.hero?.placeholder;
+  const contact = [...document.querySelectorAll('.contact a')].some((a) =>
+    /example\.com/.test(a.href) || /^https:\/\/www\.(instagram|linkedin)\.com\/$/.test(a.href) || a.textContent.includes('@handle'));
+  const draft = projects.some((p) => p.placeholder) || data.hero?.placeholder || contact;
   $('#draft-badge').hidden = !draft;
 }

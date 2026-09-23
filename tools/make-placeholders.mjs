@@ -150,7 +150,7 @@ if (SEED || !existsSync(join(ROOT, 'content/projects.json'))) {
   }));
   const data = {
     sourceDir: '.placeholder-src',
-    hero: { source: 'placeholder-hero.mp4', range: '0-5' },
+    hero: { source: 'placeholder-hero.mp4', range: '0-5', placeholder: true },
     projects,
   };
   writeFileSync(join(ROOT, 'content/projects.json'), JSON.stringify(data, null, 2) + '\n');

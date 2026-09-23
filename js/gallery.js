@@ -2,6 +2,7 @@
 // Each frame keeps its clip's own aspect ratio; the grid packs them densely.
 import { chipColors, esc, reducedMotion } from './util.js';
 import { register } from './playback.js';
+import { plan } from './pack.js';
 
 const LETTERS = 'ABCDEFGH';
 const ROW_UNIT = 4; // px, matches grid-auto-rows in styles.css
@@ -24,13 +25,13 @@ export function tileEl(p, ci) {
   btn.style.setProperty('--chip-fg', chip.fg);
   const h = hash(`${p.slug}-${ci}`);
   btn.style.setProperty('--rot', `${(h % 9) - 4}deg`);
-  btn.setAttribute('aria-label', `Open project ${p.num}: ${p.name}, ${p.category}`);
+  btn.setAttribute('aria-label', `Open project ${p.num}: ${[p.name, p.category].filter(Boolean).join(', ')}`);
   btn.innerHTML =
     `<span class="tile__in">` +
       `<video class="tile__media" muted loop playsinline preload="none" aria-hidden="true" width="${c.w}" height="${c.h}"` +
       ` data-poster="${esc(c.poster)}" data-poster720="${esc(c.poster720 || c.poster)}">` +
         `<source media="(max-width: 767px)" src="${esc(c.src720 || c.src)}" type="video/mp4">` +
-        `<source src="${esc(c.src)}" type="video/mp4">` +
+        `<source src="${esc(c.src)}" data-src720="${esc(c.src720 || c.src)}" type="video/mp4">` +
       `</video>` +
       `<span class="tile__num micro">${p.num}<span aria-hidden="true">${LETTERS[ci] || ''}</span></span>` +
       `<span class="tile__cap"><span class="tile__name">${esc(p.name)}</span><span class="tile__cat micro">${esc(p.category)}</span></span>` +
@@ -39,13 +40,15 @@ export function tileEl(p, ci) {
   return btn;
 }
 
-// posters load one screen ahead; 720px posters wherever the frame is small
+// a frame this small on screen gets the 720px files (the <source media> rule only knows the viewport)
+const small = (v) => v.clientWidth * (devicePixelRatio || 1) <= 760;
+
+// posters load one screen ahead
 const posterIO = new IntersectionObserver((list) => {
   for (const e of list) {
     if (!e.isIntersecting) continue;
     const v = e.target;
-    const small = v.clientWidth * (devicePixelRatio || 1) <= 760;
-    v.poster = small ? v.dataset.poster720 : v.dataset.poster;
+    v.poster = small(v) ? v.dataset.poster720 : v.dataset.poster;
     posterIO.unobserve(v);
   }
 }, { rootMargin: '100% 0px' });
@@ -67,6 +70,10 @@ const enterIO = new IntersectionObserver((list) => {
 export function activate(tile) {
   const inner = tile.querySelector('.tile__in');
   const video = tile.querySelector('video');
+  if (small(video)) {
+    const fallback = video.querySelector('source[data-src720]');
+    fallback.src = fallback.dataset.src720;
+  }
   if (reducedMotion.matches) inner.classList.add('is-in');
   else enterIO.observe(inner);
   posterIO.observe(video);
@@ -74,83 +81,48 @@ export function activate(tile) {
 }
 
 // ---- column spans from the clip's shape ---------------------------------------------
-// Each frame may take one of two widths (desktop 3/4/6 columns, mobile 1/2); the packer
-// picks whichever leaves the sheet tighter. The first width is the preferred one.
+// Each frame may take one of a few widths (desktop 3/4/6 columns, mobile 1/2); the packer
+// picks whichever leaves the sheet tighter. The first width is the preferred one, and a
+// featured project's lead frame prefers the larger size.
 function spans(c, featuredLead) {
   const ar = c.w / c.h;
-  if (featuredLead) {
-    return { desk: ar < 0.62 ? [4] : [6], mob: ar >= 0.9 ? [2] : [1] };
-  }
-  const desk = ar < 0.62 ? [3, 4] : ar < 1.25 ? [4, 3] : [6, 4]; // 9:16, 4:5 / 1:1, 16:9
-  const mob = ar >= 1.25 ? [2] : [1];
-  return { desk, mob };
+  if (featuredLead) return { desk: ar < 0.62 ? [4, 3] : ar < 1.25 ? [6, 4] : [6], mob: ar >= 0.9 ? [2] : [1] };
+  const desk = ar < 0.62 ? [3, 4] : ar < 1.25 ? [4, 3, 6] : [6, 4, 3]; // 9:16, 4:5 / 1:1, 16:9
+  return { desk, mob: ar >= 1.25 ? [2, 1] : [1] };
 }
 
-// Skyline packing on the grid: frames drop where they sit highest, preferring spots that
-// leave no pits under them, like prints laid onto a contact sheet. The packer may pull
-// one of the next few frames forward when it fits the lowest gap better, so the sheet
-// stays tight while keeping roughly its 01, 02, 03… order. Rows are 4px units, so a
-// frame spans exactly its height plus one gap. CSS dense flow is the no-JS fallback.
-const LOOKAHEAD = 4;
-
-// columns narrower than the smallest frame, sunk between higher neighbours, can never be
-// filled again: price them in so the packer avoids leaving them behind
-function wells(sky, minSpan) {
-  let cost = 0;
-  for (let i = 0; i < sky.length;) {
-    let j = i;
-    while (j + 1 < sky.length && sky[j + 1] === sky[i]) j++;
-    const left = i > 0 ? sky[i - 1] : Infinity;
-    const right = j < sky.length - 1 ? sky[j + 1] : Infinity;
-    if (j - i + 1 < minSpan && sky[i] < left && sky[i] < right) cost += (Math.min(left, right) - sky[i]) * (j - i + 1);
-    i = j + 1;
-  }
-  return cost;
-}
-
-function layout(sheet) {
+// Places every frame (js/pack.js) and puts the DOM in the order the sheet is seen,
+// so Tab and screen readers go top to bottom. CSS dense flow is the no-JS fallback.
+function layout(sheet, order) {
   const cs = getComputedStyle(sheet);
   const cols = cs.gridTemplateColumns.split(' ').length;
   const gap = parseFloat(cs.columnGap) || 0;
   const colW = (sheet.clientWidth - gap * (cols - 1)) / cols;
-  const sky = new Array(cols).fill(0); // filled height per column, in row units
-  const queue = [...sheet.children];
-  const minSpan = Math.min(...queue.flatMap((li) => JSON.parse(cols >= 12 ? li.dataset.span : li.dataset.spanM)));
-  while (queue.length) {
-    let best = null;
-    queue.slice(0, LOOKAHEAD).forEach((li, qi) => {
-      const options = JSON.parse(cols >= 12 ? li.dataset.span : li.dataset.spanM);
-      options.forEach((opt, rank) => {
-        const span = Math.min(cols, opt);
-        const w = span * colW + (span - 1) * gap;
-        const rows = Math.ceil(((w * Number(li.dataset.h)) / Number(li.dataset.w) + gap) / ROW_UNIT);
-        for (let c = 0; c + span <= cols; c++) {
-          const cover = sky.slice(c, c + span);
-          const top = Math.max(...cover);
-          const pits = cover.reduce((sum, h) => sum + (top - h), 0) / span;
-          const after = sky.slice();
-          for (let k = c; k < c + span; k++) after[k] = top + rows;
-          const score = top + pits * 1.5 + (wells(after, minSpan) / cols) * 2 + rank * 12 + qi * 16;
-          if (!best || score < best.score) best = { score, li, c, top, span, rows };
-        }
-      });
-    });
-    const { li, c, top, span, rows } = best;
-    li.style.gridColumn = `${c + 1} / span ${span}`;
-    li.style.gridRow = `${top + 1} / span ${rows}`;
-    for (let k = c; k < c + span; k++) sky[k] = top + rows;
-    queue.splice(queue.indexOf(li), 1);
+  const frames = order.map((li) => ({
+    w: Number(li.dataset.w),
+    h: Number(li.dataset.h),
+    spans: JSON.parse(cols >= 12 ? li.dataset.span : li.dataset.spanM),
+  }));
+  const { placements } = plan(frames, cols, colW, gap, ROW_UNIT);
+  for (const { index, c, top, span, rows } of placements) {
+    order[index].style.gridColumn = `${c + 1} / span ${span}`;
+    order[index].style.gridRow = `${top + 1} / span ${rows}`;
+  }
+  const visual = placements.slice().sort((a, b) => a.top - b.top || a.c - b.c).map((pl) => order[pl.index]);
+  if (visual.some((li, i) => sheet.children[i] !== li)) {
+    const focused = sheet.contains(document.activeElement) ? document.activeElement : null;
+    sheet.append(...visual);
+    focused?.focus({ preventScroll: true });
   }
 }
 
 export function renderGallery(sheet, projects) {
   // round-robin: every project's lead frame first, then the featured projects' B and C frames
-  const order = [];
+  const tiles = [];
   const rounds = Math.max(...projects.map((p) => p.tiles));
-  for (let r = 0; r < rounds; r++) for (const p of projects) if (r < p.tiles) order.push([p, r]);
+  for (let r = 0; r < rounds; r++) for (const p of projects) if (r < p.tiles) tiles.push([p, r]);
 
-  const frag = document.createDocumentFragment();
-  for (const [p, ci] of order) {
+  const order = tiles.map(([p, ci]) => {
     const c = p.clips[ci];
     const { desk, mob } = spans(c, p.featured && ci === 0);
     const li = document.createElement('li');
@@ -161,16 +133,17 @@ export function renderGallery(sheet, projects) {
     li.style.setProperty('--span', desk[0]);
     li.style.setProperty('--span-m', mob[0]);
     li.append(tileEl(p, ci));
-    frag.append(li);
-  }
-  sheet.replaceChildren(frag);
-  layout(sheet); // before first paint of the frames: no layout shift
+    return li;
+  });
+  sheet.replaceChildren(...order);
+  layout(sheet, order); // before first paint of the frames: no layout shift
 
   let queued = false;
+  let width = sheet.clientWidth;
   new ResizeObserver(() => {
-    if (queued) return;
+    if (queued || sheet.clientWidth === width) return;
     queued = true;
-    requestAnimationFrame(() => { queued = false; layout(sheet); });
+    requestAnimationFrame(() => { queued = false; width = sheet.clientWidth; layout(sheet, order); });
   }).observe(sheet);
 
   for (const tile of sheet.querySelectorAll('.tile')) activate(tile);

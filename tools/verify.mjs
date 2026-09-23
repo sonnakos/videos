@@ -10,6 +10,7 @@
 // (made once with ffmpeg into .qa-cache/). The shipped files are not touched.
 // Writes screenshots and report.json to qa-report/.
 import { execSync, spawn, spawnSync } from 'node:child_process';
+import { createServer } from 'node:net';
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -48,12 +49,19 @@ const gate = (id, name, pass, detail) => {
 let server;
 let BASE = process.env.BASE;
 if (!BASE) {
-  const port = 4174;
+  // a port nobody else is using, so we never test some other server by accident
+  const port = await new Promise((res) => {
+    const probe = createServer().listen(0, '127.0.0.1', () => { const p = probe.address().port; probe.close(() => res(p)); });
+  });
   server = spawn(process.execPath, [join(ROOT, 'dev-server.mjs')], { env: { ...process.env, PORT: String(port) }, stdio: 'ignore' });
+  let exited = false;
+  server.on('exit', () => { exited = true; });
   BASE = `http://localhost:${port}/`;
-  for (let i = 0; i < 50; i++) {
-    try { await fetch(BASE, { method: 'HEAD' }); break; } catch { await new Promise((r) => setTimeout(r, 100)); }
+  let up = false;
+  for (let i = 0; i < 50 && !exited && !up; i++) {
+    try { up = (await fetch(BASE, { method: 'HEAD' })).ok; } catch { await new Promise((r) => setTimeout(r, 100)); }
   }
+  if (!up) { console.error('dev-server.mjs did not start'); process.exit(1); }
 }
 try {
   const r = await fetch(BASE);
@@ -88,9 +96,12 @@ async function newPage(name, opts = {}) {
   const ctx = await browser.newContext(opts);
   if (useShim) {
     await ctx.route('**/*.mp4', async (route) => {
-      const rel = new URL(route.request().url()).pathname.replace(/^\//, '');
+      // ask the real server first: a missing or refused file must still fail the 404 gate
+      const real = await route.fetch({ headers: { ...route.request().headers(), range: 'bytes=0-0' } });
+      if (real.status() >= 400) return route.fulfill({ response: real });
+      const rel = decodeURIComponent(new URL(route.request().url()).pathname).replace(/^\//, '');
       const file = join(CACHE, rel.replace(/\//g, '__') + '.webm');
-      if (!existsSync(file)) return route.continue();
+      if (!existsSync(file)) return route.fulfill({ response: real });
       const buf = readFileSync(file);
       const range = route.request().headers().range;
       const headers = { 'content-type': 'video/webm', 'accept-ranges': 'bytes' };
@@ -111,6 +122,7 @@ async function newPage(name, opts = {}) {
 
 // wait for the project world to settle open/closed (a view transition needs a couple of rendered frames)
 const worldSettles = (page, open) => page.waitForFunction((o) => document.querySelector('#pw').open === o && !document.documentElement.matches(':active-view-transition'), open, { timeout: 5000 }).catch(() => {}).then(() => page.waitForTimeout(250));
+let holesOf;
 const playing = (page) => page.evaluate(() => [...document.querySelectorAll('video')].filter((v) => !v.paused).length);
 async function scrollThrough(page, sample) {
   const H = await page.evaluate(() => document.documentElement.scrollHeight);
@@ -232,6 +244,27 @@ const desk = await newPage('desktop', { viewport: { width: 1440, height: 900 } }
   gate('9b', 'never more than 6 videos playing (sampled while scrolling)', maxPlaying <= 6 && maxPlaying > 0, `max ${maxPlaying}`);
   gate('9c', 'LCP < 2.5 s, CLS < 0.1 (local)', perf.lcp < 2500 && perf.cls < 0.1, perf);
 
+  holesOf = (pg) => pg.evaluate(() => {
+    const sheet = document.querySelector('#sheet');
+    const box = sheet.getBoundingClientRect();
+    const cs = getComputedStyle(sheet);
+    const cols = cs.gridTemplateColumns.split(' ').length;
+    const gap = parseFloat(cs.columnGap);
+    const colW = (box.width - gap * (cols - 1)) / cols;
+    const rects = [...sheet.querySelectorAll('.tile')].map((t) => t.getBoundingClientRect());
+    let interior = 0;
+    let tail = 0;
+    for (let c = 0; c < cols; c++) {
+      const x = box.left + c * (colW + gap) + colW / 2;
+      const spans = rects.filter((r) => r.left <= x && r.right >= x).map((r) => [r.top, r.bottom]).sort((a, b) => a[0] - b[0]);
+      let y = box.top;
+      for (const [t, b] of spans) { interior = Math.max(interior, t - y - gap); y = Math.max(y, b); }
+      tail = Math.max(tail, (box.bottom - y) / box.height);
+    }
+    return { interiorPx: Math.round(interior), tailShare: +tail.toFixed(3) };
+  });
+  const sheetHoles = await holesOf(page);
+  gate('G4', 'contact sheet: no interior hole taller than one gap (24px), bottom edge within 25% of the sheet', sheetHoles.interiorPx <= 24 && sheetHoles.tailShare <= 0.25, sheetHoles);
   const tiles = await page.evaluate(() => document.querySelectorAll('.sheet .tile').length);
   gate('G1', 'contact sheet has 15–20 frames', tiles >= 15 && tiles <= 20, `${tiles} frames`);
   const overflowD = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
@@ -313,7 +346,7 @@ const desk = await newPage('desktop', { viewport: { width: 1440, height: 900 } }
 
   // featured project: full film has controls, sound on, nothing autoplays
   const featured = await page.evaluate(async () => {
-    const res = await fetch('content/projects.json'); const d = await res.json();
+    const res = await fetch('content/site.json'); const d = await res.json();
     return d.projects.find((p) => p.featured && p.media?.full)?.slug;
   });
   if (featured) {
@@ -395,6 +428,8 @@ const desk = await newPage('desktop', { viewport: { width: 1440, height: 900 } }
   // a mobile browser widens the layout viewport to fit overflowing content, so innerWidth alone can hide an overflow
   gate(7, 'mobile: scrollWidth === innerWidth === device width (390)', ov.scrollWidth === ov.innerWidth && ov.innerWidth === 390, ov);
   gate('9d', 'mobile: never more than 6 videos playing', maxPlaying <= 6, `max ${maxPlaying}`);
+  const mobileHoles = await holesOf(page);
+  gate('G4m', 'mobile contact sheet: no interior hole taller than one gap (16px), bottom edge within 25%', mobileHoles.interiorPx <= 16 && mobileHoles.tailShare <= 0.25, mobileHoles);
   const small = await page.evaluate(() => [...document.querySelectorAll('.sheet video')].slice(0, 4).map((v) => v.currentSrc.split('/').pop()));
   gate('6b', 'mobile gets the 720 px clips', small.every((s) => s.includes('-720')), small);
   await page.evaluate(() => document.querySelectorAll('.sheet .tile')[0].click());
@@ -402,6 +437,30 @@ const desk = await newPage('desktop', { viewport: { width: 1440, height: 900 } }
   await page.screenshot({ path: join(OUT, 'mobile-world.png') });
   const ovW = await page.evaluate(() => document.querySelector('.pw__scroll').scrollWidth - document.querySelector('.pw__scroll').clientWidth);
   gate('6c', 'mobile project world fits the screen', ovW <= 0, `overflow ${ovW}px`);
+}
+
+// ------------------------------------------------------------ tablet first load, #contact landing
+{
+  requested.clear();
+  const { page } = await newPage('tablet', { viewport: { width: 820, height: 1180 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  await page.goto(BASE, { waitUntil: 'load' });
+  await page.waitForTimeout(2500);
+  const bytes = [...requested].filter((u) => u.startsWith(BASE)).reduce((s, u) => {
+    const p = join(ROOT, decodeURIComponent(new URL(u).pathname).replace(/^\//, '') || 'index.html');
+    return s + (existsSync(p) && statSync(p).isFile() ? statSync(p).size : 0);
+  }, 0);
+  gate('9e', 'tablet 820×1180 @2x: first load ≤ 3 MB (whole-file upper bound)', bytes <= 3 * 1024 * 1024, `${(bytes / 1048576).toFixed(2)} MB`);
+}
+{
+  const { page } = await newPage('contact-landing', { viewport: { width: 1440, height: 900 } });
+  await page.addInitScript(() => {
+    window.__cls = 0;
+    new PerformanceObserver((l) => { for (const e of l.getEntries()) if (!e.hadRecentInput) window.__cls += e.value; }).observe({ type: 'layout-shift', buffered: true });
+  });
+  await page.goto(BASE + '#contact', { waitUntil: 'load' });
+  await page.waitForTimeout(2000);
+  const cls = await page.evaluate(() => +window.__cls.toFixed(4));
+  gate('9f', 'landing on #contact: CLS < 0.1', cls < 0.1, { cls });
 }
 
 // ------------------------------------------------------------ 10 reduced motion
@@ -435,6 +494,17 @@ gate(4, 'console clean: 0 errors, 0 warnings', problems.console.length === 0, pr
 
 await browser.close();
 server?.kill();
+
+const html = readFileSync(join(ROOT, 'index.html'), 'utf8');
+const site = JSON.parse(readFileSync(join(ROOT, 'content/site.json'), 'utf8'));
+const left = [];
+if (/example\.com/.test(html)) left.push('contact e-mail + START A PROJECT mailto (hello@example.com)');
+if (/@handle|linkedin\.com\/in\/…|href="https:\/\/www\.(instagram|linkedin)\.com\/"/.test(html)) left.push('Instagram / LinkedIn links');
+if (/\.example\//.test(html)) left.push('SITE_URL (canonical, og:*, QR) — run tools/set-url.mjs');
+const ph = site.projects.filter((p) => p.placeholder).length;
+if (ph) left.push(`${ph} placeholder projects in content/projects.json`);
+if (site.hero?.placeholder) left.push('placeholder REEL clip');
+for (const l of left) console.log(`note  still a placeholder: ${l}`);
 writeFileSync(join(OUT, 'report.json'), JSON.stringify({ base: BASE, h264Shim: useShim, results }, null, 2));
 const failed = results.filter((r) => !r.pass);
 console.log(`\n${results.length - failed.length}/${results.length} gates passed${failed.length ? ' — failing: ' + failed.map((f) => f.id).join(', ') : ''}`);
