@@ -1,7 +1,8 @@
 // Page chrome: header hairline, the cover, copy-link, band clip, draft badge.
-import { $, reducedMotion } from './util.js';
+import { $ } from './util.js';
 import { register } from './playback.js';
 import { activate, tileEl } from './gallery.js';
+import { initPrint } from './print.js';
 
 // the header's hairline appears only once the page has left the top
 export function initHeader() {
@@ -13,13 +14,13 @@ export function initHeader() {
   new IntersectionObserver(([e]) => header.classList.toggle('is-scrolled', !e.isIntersecting)).observe(sentinel);
 }
 
-// The cover: the reel plays as the cover picture (through the playback pool), drifts a
-// little with the pointer, and a SMPTE timecode under it counts the frames.
+// The cover: the reel plays as the cover picture (through the playback pool), printed in
+// halftone with a loupe over it (js/print.js), and a SMPTE timecode under it counts the frames.
 export function initCover() {
   const figure = $('#cover-reel');
   const video = $('video', figure);
   register(video, 'page');
-  drift($('.cover'), figure, video);
+  initPrint($('.cover__frame', figure), video, $('#cover-hint'));
   timecode(video, $('#cover-tc'));
 }
 
@@ -38,38 +39,6 @@ function timecode(video, out) {
   } else {
     video.addEventListener('timeupdate', () => show(video.currentTime));
   }
-}
-
-// Pointer drift: the footage slides a little inside its frame toward the pointer.
-// Transform only, eased in rAF, idle when the pointer rests; mouse/trackpad only.
-function drift(area, figure, video) {
-  const fine = matchMedia('(hover: hover) and (pointer: fine)');
-  if (!fine.matches || reducedMotion.matches) return;
-  figure.classList.add('cover__reel--drift');
-  const RANGE = 1.8; // % of the frame; the 1.06 overscan leaves 3% to spare
-  let tx = 0, ty = 0, x = 0, y = 0, raf = 0;
-  const step = () => {
-    x += (tx - x) * 0.08;
-    y += (ty - y) * 0.08;
-    video.style.transform = `translate3d(${(x * RANGE).toFixed(3)}%, ${(y * RANGE).toFixed(3)}%, 0) scale(1.06)`;
-    raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.002 ? requestAnimationFrame(step) : 0;
-  };
-  const aim = (nx, ny) => { tx = nx; ty = ny; if (!raf) raf = requestAnimationFrame(step); };
-  area.addEventListener('pointermove', (e) => {
-    if (e.pointerType !== 'mouse' || reducedMotion.matches) return;
-    const r = figure.getBoundingClientRect();
-    const cx = Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width - 0.5) * 2));
-    const cy = Math.max(-1, Math.min(1, ((e.clientY - r.top) / r.height - 0.5) * 2));
-    aim(-cx, -cy);
-  });
-  area.addEventListener('pointerleave', () => aim(0, 0));
-  reducedMotion.addEventListener('change', () => {
-    if (!reducedMotion.matches) return;
-    cancelAnimationFrame(raf);
-    raf = 0;
-    figure.classList.remove('cover__reel--drift');
-    video.style.transform = '';
-  });
 }
 
 export function initCopyLink() {

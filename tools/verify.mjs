@@ -72,7 +72,9 @@ try {
 }
 
 // ------------------------------------------------------------ browser
-const browser = await chromium.launch();
+// WebGL through SwiftShader, chosen explicitly: the cover print refuses a browser's silent
+// software fallback (failIfMajorPerformanceCaveat), so without this it would not run here
+const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const probe = await browser.newPage();
 const h264 = await probe.evaluate(() => document.createElement('video').canPlayType('video/mp4; codecs="avc1.640028"'));
 await probe.close();
@@ -230,11 +232,34 @@ const desk = await newPage('desktop', { viewport: { width: 1440, height: 900 } }
     return { playing: !v.paused, advanced: +(v.currentTime - a).toFixed(2), timecode: [tc, document.querySelector('#cover-tc').textContent] };
   });
   gate('5b', 'cover: the reel plays and the timecode runs', heroMoves.playing && heroMoves.advanced > 0.2 && heroMoves.timecode[0] !== heroMoves.timecode[1], heroMoves);
-  await page.mouse.move(150, 500);
+  const fr = await page.evaluate(() => { const r = document.querySelector('.cover__frame').getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height }; });
+  const at = { x: Math.round(fr.w * 0.3), y: Math.round(fr.h * 0.4) };
+  const lookState = () => page.evaluate(() => {
+    const c = document.querySelector('.cover__print');
+    return c ? { ...c.loupe, shown: c.style.visibility, pressed: document.querySelector('.cover__look').getAttribute('aria-pressed') } : null;
+  });
+  await page.mouse.move(fr.x + at.x, fr.y + at.y, { steps: 6 });
   await page.waitForTimeout(900);
-  const drift = await page.evaluate(() => document.querySelector('.cover__video').style.transform);
-  gate('H1', 'cover: footage drifts inside its frame with the mouse (transform only)', /translate3d\((?!0%, 0%)/.test(drift), drift);
+  const loupe = await lookState();
+  await page.mouse.click(fr.x + at.x, fr.y + at.y);
+  await page.waitForTimeout(1200);
+  const lookOpen = await lookState();
+  await page.mouse.click(fr.x + at.x, fr.y + at.y);
+  await page.waitForTimeout(1200);
+  const lookClosed = await lookState();
+  gate('H1', 'cover: the reel is printed in halftone, the loupe follows the mouse, a click opens full colour and closes it',
+    !!loupe && loupe.shown === 'visible' && Math.hypot(loupe.x - at.x, loupe.y - at.y) < 6 && lookOpen.pressed === 'true' && lookOpen.shown === 'hidden' && lookClosed.pressed === 'false' && lookClosed.shown === 'visible',
+    { at, loupe, open: lookOpen, closed: lookClosed });
   await page.mouse.move(720, 20);
+  await page.focus('.cover__look');
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(1200);
+  const keyOpen = await lookState();
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(1200);
+  const keyClosed = await lookState();
+  await page.evaluate(() => document.activeElement.blur());
+  gate('H2', 'cover: the keyboard reaches the loupe and toggles full colour', keyOpen?.pressed === 'true' && keyOpen.shown === 'hidden' && keyClosed?.pressed === 'false' && keyClosed.shown === 'visible', { keyOpen, keyClosed });
 
   const maxPlaying = await scrollThrough(page, true);
   await scrollToSel(page, '#sheet', 200);
@@ -479,14 +504,18 @@ const desk = await newPage('desktop', { viewport: { width: 1440, height: 900 } }
   await page.evaluate(() => scrollTo(0, 0));
   await page.mouse.move(150, 200);
   await page.waitForTimeout(500);
+  const loupeAt = () => page.evaluate(() => { const l = document.querySelector('.cover__print')?.loupe; return l ? `${l.x.toFixed(1)},${l.y.toFixed(1)}` : 'no print'; });
+  const l1 = await loupeAt();
+  await page.waitForTimeout(800);
+  const l2 = await loupeAt();
   const anim = await page.evaluate(() => ({
     stamp: getComputedStyle(document.querySelector('.stamp svg')).animationName,
     marquee: getComputedStyle(document.querySelector('.marquee__track')).animationName,
-    drift: document.querySelector('.cover__video').style.transform || 'none',
   }));
+  anim.loupe = l1 !== 'no print' && l1 === l2 ? 'still' : `${l1} → ${l2}`;
   await scrollToSel(page, '#sheet', 100);
   await page.screenshot({ path: join(OUT, 'reduced-motion-gallery.png') });
-  gate(10, 'reduced motion: no video plays, posters show, frames visible, stamp + marquee + cover drift still', max === 0 && posters.withPoster === posters.inView && posters.inView > 0 && posters.tilesVisible && anim.stamp === 'none' && anim.marquee === 'none' && anim.drift === 'none', { maxPlaying: max, ...posters, ...anim });
+  gate(10, 'reduced motion: no video plays, posters show, frames visible, stamp + marquee still, the loupe does not wander', max === 0 && posters.withPoster === posters.inView && posters.inView > 0 && posters.tilesVisible && anim.stamp === 'none' && anim.marquee === 'none' && anim.loupe === 'still', { maxPlaying: max, ...posters, ...anim });
 }
 
 // ------------------------------------------------------------ 3 + 4

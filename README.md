@@ -31,7 +31,7 @@ node dev-server.mjs          # http://localhost:4174  (Range-kéréseket is kisz
 
 ## Ami az egérre reagál
 
-- **Címlap:** a reel finoman elcsúszik a kereten belül az egér felé (csak `transform`, rAF-ben, és leáll, ha az egér nem mozog). Érintőképernyőn és csökkentett mozgásnál kikapcsol. Alatta futó SMPTE-időkód (25 fps), képkockánként frissül.
+- **Címlap – nyomat és nagyító** (`js/print.js`): a reel két festékkel, raszterpontokból „nyomtatva” jelenik meg a papíron (terrakotta 15°-on, fekete 45°-on, egy hajszálnyi elcsúszással, mint egy riso-nyomat). Ahol az egér jár, egy kerek nagyító mutatja az igazi, színes felvételt kicsit felnagyítva; kattintásra onnan kinyílik a teljes színes reel, újabb kattintásra visszaáll. Betöltéskor a színes kép összehúzódik a nagyítóba. Telefonon a nagyító magától vándorol, oldalirányú húzással mozgatható, koppintásra nyílik; a függőleges húzás görgeti az oldalt. Billentyűzettel is elérhető (Enter/Szóköz). Csökkentett mozgásnál a nyomat a posztert mutatja, a nagyító nem vándorol. WebGL nélkül, vagy ha a gépen csak szoftveres renderelés van, egyszerűen a sima videó marad. Alatta futó SMPTE-időkód (25 fps), képkockánként frissül.
 - **Kontaktlap:** a kiválasztott képkockát (hover vagy billentyűs fókusz) piros zsírkréta-karika keríti be — ahogy a fotós bekarikázza a kontaktlapon, amit nagyítani akar. Három kézzel rajzolt változat, képkockánként rögzített dőléssel.
 - **Fejléc:** a ✳ egy nyolcadot fordul hoverre.
 
