@@ -1,0 +1,8 @@
+# synthetic sources for the placeholder build (tools/make-placeholders.mjs)
+.placeholder-src/
+# tools/verify.mjs working files
+.qa-cache/
+qa-report/
+node_modules/
+.DS_Store
+.vercel

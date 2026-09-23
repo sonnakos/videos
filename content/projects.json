@@ -1,0 +1,710 @@
+{
+  "sourceDir": ".placeholder-src",
+  "hero": {
+    "source": "placeholder-hero.mp4",
+    "range": "0-5",
+    "media": {
+      "src": "assets/clips/hero-a.mp4",
+      "src720": "assets/clips/hero-a-720.mp4",
+      "poster": "assets/posters/hero-a.webp",
+      "poster720": "assets/posters/hero-a-720.webp",
+      "w": 1280,
+      "h": 720,
+      "bytes": 436645,
+      "bytes720": 331081,
+      "crf": 26,
+      "key": "placeholder-hero.mp4|0-5"
+    }
+  },
+  "projects": [
+    {
+      "slug": "placeholder-01",
+      "name": "Placeholder 01",
+      "category": "Category TBC",
+      "client": "Client TBC",
+      "featured": true,
+      "tiles": 3,
+      "cleared": true,
+      "placeholder": true,
+      "accent": "auto",
+      "whatIDid": "TBC — Ákos fills this in (edit, colour, motion, shoot).",
+      "tools": "TBC",
+      "turnaround": "TBC",
+      "summary": "Placeholder. One sentence on what this video solved for the client goes here.",
+      "source": "placeholder-01.mp4",
+      "clips": [
+        "0-5",
+        "5-10",
+        "10-15",
+        "15-20"
+      ],
+      "full": "0-",
+      "media": {
+        "clips": [
+          {
+            "src": "assets/clips/placeholder-01-a.mp4",
+            "src720": "assets/clips/placeholder-01-a-720.mp4",
+            "poster": "assets/posters/placeholder-01-a.webp",
+            "poster720": "assets/posters/placeholder-01-a-720.webp",
+            "w": 1280,
+            "h": 720,
+            "bytes": 21990,
+            "bytes720": 14103,
+            "crf": 26,
+            "key": "placeholder-01.mp4|0-5"
+          },
+          {
+            "src": "assets/clips/placeholder-01-b.mp4",
+            "src720": "assets/clips/placeholder-01-b-720.mp4",
+            "poster": "assets/posters/placeholder-01-b.webp",
+            "poster720": "assets/posters/placeholder-01-b-720.webp",
+            "w": 1280,
+            "h": 720,
+            "bytes": 892229,
+            "bytes720": 455129,
+            "crf": 26,
+            "key": "placeholder-01.mp4|5-10"
+          },
+          {
+            "src": "assets/clips/placeholder-01-c.mp4",
+            "src720": "assets/clips/placeholder-01-c-720.mp4",
+            "poster": "assets/posters/placeholder-01-c.webp",
+            "poster720": "assets/posters/placeholder-01-c-720.webp",
+            "w": 1280,
+            "h": 720,
+            "bytes": 150540,
+            "bytes720": 444896,
+            "crf": 26,
+            "key": "placeholder-01.mp4|10-15"
+          },
+          {
+            "src": "assets/clips/placeholder-01-d.mp4",
+            "src720": "assets/clips/placeholder-01-d-720.mp4",
+            "poster": "assets/posters/placeholder-01-d.webp",
+            "poster720": "assets/posters/placeholder-01-d-720.webp",
+            "w": 1280,
+            "h": 720,
+            "bytes": 29193,
+            "bytes720": 17394,
+            "crf": 26,
+            "key": "placeholder-01.mp4|15-20"
+          }
+        ],
+        "full": {
+          "src": "assets/full/placeholder-01.mp4",
+          "poster": "assets/posters/placeholder-01-full.webp",
+          "w": 1920,
+          "h": 1080,
+          "duration": 20,
+          "bytes": 2047332,
+          "key": "placeholder-01.mp4|\"0-\""
+        },
+        "accent": "#BF462A"
+      }
+    },
+    {
+      "slug": "placeholder-02",
+      "name": "Placeholder 02",
+      "category": "Category TBC",
+      "client": "Client TBC",
+      "featured": false,
+      "tiles": 1,
+      "cleared": true,
+      "placeholder": true,
+      "accent": "auto",
+      "whatIDid": "TBC — Ákos fills this in (edit, colour, motion, shoot).",
+      "tools": "TBC",
+      "turnaround": "TBC",
+      "summary": "Placeholder. One sentence on what this video solved for the client goes here.",
+      "source": "placeholder-02.mp4",
+      "clips": [
+        "0-5",
+        "5-10",
+        "10-15"
+      ],
+      "media": {
+        "clips": [
+          {
+            "src": "assets/clips/placeholder-02-a.mp4",
+            "src720": "assets/clips/placeholder-02-a-720.mp4",
+            "poster": "assets/posters/placeholder-02-a.webp",
+            "poster720": "assets/posters/placeholder-02-a-720.webp",
+            "w": 720,
+            "h": 1280,
+            "bytes": 571018,
+            "bytes720": 296139,
+            "crf": 26,
+            "key": "placeholder-02.mp4|0-5"
+          },
+          {
+            "src": "assets/clips/placeholder-02-b.mp4",
+            "src720": "assets/clips/placeholder-02-b-720.mp4",
+            "poster": "assets/posters/placeholder-02-b.webp",
+            "poster720": "assets/posters/placeholder-02-b-720.webp",
+            "w": 720,
+            "h": 1280,
+            "bytes": 31402,
+            "bytes720": 18127,
+            "crf": 26,
+            "key": "placeholder-02.mp4|5-10"
+          },
+          {
+            "src": "assets/clips/placeholder-02-c.mp4",
+            "src720": "assets/clips/placeholder-02-c-720.mp4",
+            "poster": "assets/posters/placeholder-02-c.webp",
+            "poster720": "assets/posters/placeholder-02-c-720.webp",
+            "w": 720,
+            "h": 1280,
+            "bytes": 19317,
+            "bytes720": 11845,
+            "crf": 26,
+            "key": "placeholder-02.mp4|10-15"
+          }
+        ],
+        "accent": "#879163"
+      }
+    },
+    {
+      "slug": "placeholder-03",
+      "name": "Placeholder 03",
+      "category": "Category TBC",
+      "client": "Client TBC",
+      "featured": true,
+      "tiles": 3,
+      "cleared": true,
+      "placeholder": true,
+      "accent": "auto",
+      "whatIDid": "TBC — Ákos fills this in (edit, colour, motion, shoot).",
+      "tools": "TBC",
+      "turnaround": "TBC",
+      "summary": "Placeholder. One sentence on what this video solved for the client goes here.",
+      "source": "placeholder-03.mp4",
+      "clips": [
+        "0-5",
+        "5-10",
+        "10-15",
+        "15-20"
+      ],
+      "full": "0-",
+      "media": {
+        "clips": [
+          {
+            "src": "assets/clips/placeholder-03-a.mp4",
+            "src720": "assets/clips/placeholder-03-a-720.mp4",
+            "poster": "assets/posters/placeholder-03-a.webp",
+            "poster720": "assets/posters/placeholder-03-a-720.webp",
+            "w": 1024,
+            "h": 1280,
+            "bytes": 1028689,
+            "bytes720": 74318,
+            "crf": 26,
+            "key": "placeholder-03.mp4|0-5"
+          },
+          {
+            "src": "assets/clips/placeholder-03-b.mp4",
+            "src720": "assets/clips/placeholder-03-b-720.mp4",
+            "poster": "assets/posters/placeholder-03-b.webp",
+            "poster720": "assets/posters/placeholder-03-b-720.webp",
+            "w": 1024,
+            "h": 1280,
+            "bytes": 25383,
+            "bytes720": 16051,
+            "crf": 26,
+            "key": "placeholder-03.mp4|5-10"
+          },
+          {
+            "src": "assets/clips/placeholder-03-c.mp4",
+            "src720": "assets/clips/placeholder-03-c-720.mp4",
+            "poster": "assets/posters/placeholder-03-c.webp",
+            "poster720": "assets/posters/placeholder-03-c-720.webp",
+            "w": 1024,
+            "h": 1280,
+            "bytes": 118050,
+            "bytes720": 56578,
+            "crf": 26,
+            "key": "placeholder-03.mp4|10-15"
+          },
+          {
+            "src": "assets/clips/placeholder-03-d.mp4",
+            "src720": "assets/clips/placeholder-03-d-720.mp4",
+            "poster": "assets/posters/placeholder-03-d.webp",
+            "poster720": "assets/posters/placeholder-03-d-720.webp",
+            "w": 1024,
+            "h": 1280,
+            "bytes": 1286196,
+            "bytes720": 582070,
+            "crf": 26,
+            "key": "placeholder-03.mp4|15-20"
+          }
+        ],
+        "full": {
+          "src": "assets/full/placeholder-03.mp4",
+          "poster": "assets/posters/placeholder-03-full.webp",
+          "w": 1536,
+          "h": 1920,
+          "duration": 20,
+          "bytes": 3952795,
+          "key": "placeholder-03.mp4|\"0-\""
+        },
+        "accent": "#907032"
+      }
+    },
+    {
+      "slug": "placeholder-04",
+      "name": "Placeholder 04",
+      "category": "Category TBC",
+      "client": "Client TBC",
+      "featured": false,
+      "tiles": 1,
+      "cleared": true,
+      "placeholder": true,
+      "accent": "auto",
+      "whatIDid": "TBC — Ákos fills this in (edit, colour, motion, shoot).",
+      "tools": "TBC",
+      "turnaround": "TBC",
+      "summary": "Placeholder. One sentence on what this video solved for the client goes here.",
+      "source": "placeholder-04.mp4",
+      "clips": [
+        "0-5",
+        "5-10",
+        "10-15"
+      ],
+      "media": {
+        "clips": [
+          {
+            "src": "assets/clips/placeholder-04-a.mp4",
+            "src720": "assets/clips/placeholder-04-a-720.mp4",
+            "poster": "assets/posters/placeholder-04-a.webp",
+            "poster720": "assets/posters/placeholder-04-a-720.webp",
+            "w": 1280,
+            "h": 1280,
+            "bytes": 43387,
+            "bytes720": 24181,
+            "crf": 26,
+            "key": "placeholder-04.mp4|0-5"
+          },
+          {
+            "src": "assets/clips/placeholder-04-b.mp4",
+            "src720": "assets/clips/placeholder-04-b-720.mp4",
+            "poster": "assets/posters/placeholder-04-b.webp",
+            "poster720": "assets/posters/placeholder-04-b-720.webp",
+            "w": 1280,
+            "h": 1280,
+            "bytes": 774186,
+            "bytes720": 80634,
+            "crf": 26,
+            "key": "placeholder-04.mp4|5-10"
+          },
+          {
+            "src": "assets/clips/placeholder-04-c.mp4",
+            "src720": "assets/clips/placeholder-04-c-720.mp4",
+            "poster": "assets/posters/placeholder-04-c.webp",
+            "poster720": "assets/posters/placeholder-04-c-720.webp",
+            "w": 1280,
+            "h": 1280,
+            "bytes": 639619,
+            "bytes720": 297735,
+            "crf": 26,
+            "key": "placeholder-04.mp4|10-15"
+          }
+        ],
+        "accent": "#617A90"
+      }
+    },
+    {
+      "slug": "placeholder-05",
+      "name": "Placeholder 05",
+      "category": "Category TBC",
+      "client": "Client TBC",
+      "featured": false,
+      "tiles": 1,
+      "cleared": true,
+      "placeholder": true,
+      "accent": "auto",
+      "whatIDid": "TBC — Ákos fills this in (edit, colour, motion, shoot).",
+      "tools": "TBC",
+      "turnaround": "TBC",
+      "summary": "Placeholder. One sentence on what this video solved for the client goes here.",
+      "source": "placeholder-05.mp4",
+      "clips": [
+        "0-5",
+        "5-10",
+        "10-15"
+      ],
+      "media": {
+        "clips": [
+          {
+            "src": "assets/clips/placeholder-05-a.mp4",
+            "src720": "assets/clips/placeholder-05-a-720.mp4",
+            "poster": "assets/posters/placeholder-05-a.webp",
+            "poster720": "assets/posters/placeholder-05-a-720.webp",
+            "w": 590,
+            "h": 1280,
+            "bytes": 58052,
+            "bytes720": 35552,
+            "crf": 26,
+            "key": "placeholder-05.mp4|0-5"
+          },
+          {
+            "src": "assets/clips/placeholder-05-b.mp4",
+            "src720": "assets/clips/placeholder-05-b-720.mp4",
+            "poster": "assets/posters/placeholder-05-b.webp",
+            "poster720": "assets/posters/placeholder-05-b-720.webp",
+            "w": 590,
+            "h": 1280,
+            "bytes": 772094,
+            "bytes720": 398855,
+            "crf": 26,
+            "key": "placeholder-05.mp4|5-10"
+          },
+          {
+            "src": "assets/clips/placeholder-05-c.mp4",
+            "src720": "assets/clips/placeholder-05-c-720.mp4",
+            "poster": "assets/posters/placeholder-05-c.webp",
+            "poster720": "assets/posters/placeholder-05-c-720.webp",
+            "w": 590,
+            "h": 1280,
+            "bytes": 18337,
+            "bytes720": 11932,
+            "crf": 26,
+            "key": "placeholder-05.mp4|10-15"
+          }
+        ],
+        "accent": "#A67374"
+      }
+    },
+    {
+      "slug": "placeholder-06",
+      "name": "Placeholder 06",
+      "category": "Category TBC",
+      "client": "Client TBC",
+      "featured": true,
+      "tiles": 3,
+      "cleared": true,
+      "placeholder": true,
+      "accent": "auto",
+      "whatIDid": "TBC — Ákos fills this in (edit, colour, motion, shoot).",
+      "tools": "TBC",
+      "turnaround": "TBC",
+      "summary": "Placeholder. One sentence on what this video solved for the client goes here.",
+      "source": "placeholder-06.mp4",
+      "clips": [
+        "0-5",
+        "5-10",
+        "10-15",
+        "15-20"
+      ],
+      "full": "0-",
+      "media": {
+        "clips": [
+          {
+            "src": "assets/clips/placeholder-06-a.mp4",
+            "src720": "assets/clips/placeholder-06-a-720.mp4",
+            "poster": "assets/posters/placeholder-06-a.webp",
+            "poster720": "assets/posters/placeholder-06-a-720.webp",
+            "w": 720,
+            "h": 1280,
+            "bytes": 1032141,
+            "bytes720": 523354,
+            "crf": 26,
+            "key": "placeholder-06.mp4|0-5"
+          },
+          {
+            "src": "assets/clips/placeholder-06-b.mp4",
+            "src720": "assets/clips/placeholder-06-b-720.mp4",
+            "poster": "assets/posters/placeholder-06-b.webp",
+            "poster720": "assets/posters/placeholder-06-b-720.webp",
+            "w": 720,
+            "h": 1280,
+            "bytes": 20833,
+            "bytes720": 12359,
+            "crf": 26,
+            "key": "placeholder-06.mp4|5-10"
+          },
+          {
+            "src": "assets/clips/placeholder-06-c.mp4",
+            "src720": "assets/clips/placeholder-06-c-720.mp4",
+            "poster": "assets/posters/placeholder-06-c.webp",
+            "poster720": "assets/posters/placeholder-06-c-720.webp",
+            "w": 720,
+            "h": 1280,
+            "bytes": 266396,
+            "bytes720": 319131,
+            "crf": 26,
+            "key": "placeholder-06.mp4|10-15"
+          },
+          {
+            "src": "assets/clips/placeholder-06-d.mp4",
+            "src720": "assets/clips/placeholder-06-d-720.mp4",
+            "poster": "assets/posters/placeholder-06-d.webp",
+            "poster720": "assets/posters/placeholder-06-d-720.webp",
+            "w": 720,
+            "h": 1280,
+            "bytes": 31566,
+            "bytes720": 18309,
+            "crf": 26,
+            "key": "placeholder-06.mp4|15-20"
+          }
+        ],
+        "full": {
+          "src": "assets/full/placeholder-06.mp4",
+          "poster": "assets/posters/placeholder-06-full.webp",
+          "w": 1080,
+          "h": 1920,
+          "duration": 20,
+          "bytes": 3474543,
+          "key": "placeholder-06.mp4|\"0-\""
+        },
+        "accent": "#E34E35"
+      }
+    },
+    {
+      "slug": "placeholder-07",
+      "name": "Placeholder 07",
+      "category": "Category TBC",
+      "client": "Client TBC",
+      "featured": false,
+      "tiles": 1,
+      "cleared": true,
+      "placeholder": true,
+      "accent": "auto",
+      "whatIDid": "TBC — Ákos fills this in (edit, colour, motion, shoot).",
+      "tools": "TBC",
+      "turnaround": "TBC",
+      "summary": "Placeholder. One sentence on what this video solved for the client goes here.",
+      "source": "placeholder-07.mp4",
+      "clips": [
+        "0-5",
+        "5-10",
+        "10-15"
+      ],
+      "media": {
+        "clips": [
+          {
+            "src": "assets/clips/placeholder-07-a.mp4",
+            "src720": "assets/clips/placeholder-07-a-720.mp4",
+            "poster": "assets/posters/placeholder-07-a.webp",
+            "poster720": "assets/posters/placeholder-07-a-720.webp",
+            "w": 1280,
+            "h": 720,
+            "bytes": 235148,
+            "bytes720": 590485,
+            "crf": 26,
+            "key": "placeholder-07.mp4|0-5"
+          },
+          {
+            "src": "assets/clips/placeholder-07-b.mp4",
+            "src720": "assets/clips/placeholder-07-b-720.mp4",
+            "poster": "assets/posters/placeholder-07-b.webp",
+            "poster720": "assets/posters/placeholder-07-b-720.webp",
+            "w": 1280,
+            "h": 720,
+            "bytes": 26352,
+            "bytes720": 15524,
+            "crf": 26,
+            "key": "placeholder-07.mp4|5-10"
+          },
+          {
+            "src": "assets/clips/placeholder-07-c.mp4",
+            "src720": "assets/clips/placeholder-07-c-720.mp4",
+            "poster": "assets/posters/placeholder-07-c.webp",
+            "poster720": "assets/posters/placeholder-07-c-720.webp",
+            "w": 1280,
+            "h": 720,
+            "bytes": 22984,
+            "bytes720": 12590,
+            "crf": 26,
+            "key": "placeholder-07.mp4|10-15"
+          }
+        ],
+        "accent": "#8F7032"
+      }
+    },
+    {
+      "slug": "placeholder-08",
+      "name": "Placeholder 08",
+      "category": "Category TBC",
+      "client": "Client TBC",
+      "featured": false,
+      "tiles": 1,
+      "cleared": true,
+      "placeholder": true,
+      "accent": "auto",
+      "whatIDid": "TBC — Ákos fills this in (edit, colour, motion, shoot).",
+      "tools": "TBC",
+      "turnaround": "TBC",
+      "summary": "Placeholder. One sentence on what this video solved for the client goes here.",
+      "source": "placeholder-08.mp4",
+      "clips": [
+        "0-5",
+        "5-10",
+        "10-15"
+      ],
+      "media": {
+        "clips": [
+          {
+            "src": "assets/clips/placeholder-08-a.mp4",
+            "src720": "assets/clips/placeholder-08-a-720.mp4",
+            "poster": "assets/posters/placeholder-08-a.webp",
+            "poster720": "assets/posters/placeholder-08-a-720.webp",
+            "w": 1024,
+            "h": 1280,
+            "bytes": 26373,
+            "bytes720": 16182,
+            "crf": 26,
+            "key": "placeholder-08.mp4|0-5"
+          },
+          {
+            "src": "assets/clips/placeholder-08-b.mp4",
+            "src720": "assets/clips/placeholder-08-b-720.mp4",
+            "poster": "assets/posters/placeholder-08-b.webp",
+            "poster720": "assets/posters/placeholder-08-b-720.webp",
+            "w": 1024,
+            "h": 1280,
+            "bytes": 1134311,
+            "bytes720": 498850,
+            "crf": 26,
+            "key": "placeholder-08.mp4|5-10"
+          },
+          {
+            "src": "assets/clips/placeholder-08-c.mp4",
+            "src720": "assets/clips/placeholder-08-c-720.mp4",
+            "poster": "assets/posters/placeholder-08-c.webp",
+            "poster720": "assets/posters/placeholder-08-c-720.webp",
+            "w": 1024,
+            "h": 1280,
+            "bytes": 110710,
+            "bytes720": 52818,
+            "crf": 26,
+            "key": "placeholder-08.mp4|10-15"
+          }
+        ],
+        "accent": "#C1472C"
+      }
+    },
+    {
+      "slug": "placeholder-09",
+      "name": "Placeholder 09",
+      "category": "Category TBC",
+      "client": "Client TBC",
+      "featured": false,
+      "tiles": 1,
+      "cleared": true,
+      "placeholder": true,
+      "accent": "auto",
+      "whatIDid": "TBC — Ákos fills this in (edit, colour, motion, shoot).",
+      "tools": "TBC",
+      "turnaround": "TBC",
+      "summary": "Placeholder. One sentence on what this video solved for the client goes here.",
+      "source": "placeholder-09.mp4",
+      "clips": [
+        "0-5",
+        "5-10",
+        "10-15"
+      ],
+      "media": {
+        "clips": [
+          {
+            "src": "assets/clips/placeholder-09-a.mp4",
+            "src720": "assets/clips/placeholder-09-a-720.mp4",
+            "poster": "assets/posters/placeholder-09-a.webp",
+            "poster720": "assets/posters/placeholder-09-a-720.webp",
+            "w": 720,
+            "h": 1280,
+            "bytes": 32319,
+            "bytes720": 18206,
+            "crf": 26,
+            "key": "placeholder-09.mp4|0-5"
+          },
+          {
+            "src": "assets/clips/placeholder-09-b.mp4",
+            "src720": "assets/clips/placeholder-09-b-720.mp4",
+            "poster": "assets/posters/placeholder-09-b.webp",
+            "poster720": "assets/posters/placeholder-09-b-720.webp",
+            "w": 720,
+            "h": 1280,
+            "bytes": 162173,
+            "bytes720": 183423,
+            "crf": 26,
+            "key": "placeholder-09.mp4|5-10"
+          },
+          {
+            "src": "assets/clips/placeholder-09-c.mp4",
+            "src720": "assets/clips/placeholder-09-c-720.mp4",
+            "poster": "assets/posters/placeholder-09-c.webp",
+            "poster720": "assets/posters/placeholder-09-c-720.webp",
+            "w": 720,
+            "h": 1280,
+            "bytes": 774778,
+            "bytes720": 394125,
+            "crf": 26,
+            "key": "placeholder-09.mp4|10-15"
+          }
+        ],
+        "accent": "#7D875A"
+      }
+    },
+    {
+      "slug": "placeholder-10",
+      "name": "Placeholder 10",
+      "category": "Category TBC",
+      "client": "Client TBC",
+      "featured": false,
+      "tiles": 1,
+      "cleared": true,
+      "placeholder": true,
+      "accent": "auto",
+      "whatIDid": "TBC — Ákos fills this in (edit, colour, motion, shoot).",
+      "tools": "TBC",
+      "turnaround": "TBC",
+      "summary": "Placeholder. One sentence on what this video solved for the client goes here.",
+      "source": "placeholder-10.mp4",
+      "clips": [
+        "0-5",
+        "5-10",
+        "10-15"
+      ],
+      "media": {
+        "clips": [
+          {
+            "src": "assets/clips/placeholder-10-a.mp4",
+            "src720": "assets/clips/placeholder-10-a-720.mp4",
+            "poster": "assets/posters/placeholder-10-a.webp",
+            "poster720": "assets/posters/placeholder-10-a-720.webp",
+            "w": 1280,
+            "h": 720,
+            "bytes": 687528,
+            "bytes720": 342512,
+            "crf": 26,
+            "key": "placeholder-10.mp4|0-5"
+          },
+          {
+            "src": "assets/clips/placeholder-10-b.mp4",
+            "src720": "assets/clips/placeholder-10-b-720.mp4",
+            "poster": "assets/posters/placeholder-10-b.webp",
+            "poster720": "assets/posters/placeholder-10-b-720.webp",
+            "w": 1280,
+            "h": 720,
+            "bytes": 67094,
+            "bytes720": 32906,
+            "crf": 26,
+            "key": "placeholder-10.mp4|5-10"
+          },
+          {
+            "src": "assets/clips/placeholder-10-c.mp4",
+            "src720": "assets/clips/placeholder-10-c-720.mp4",
+            "poster": "assets/posters/placeholder-10-c.webp",
+            "poster720": "assets/posters/placeholder-10-c-720.webp",
+            "w": 1280,
+            "h": 720,
+            "bytes": 167466,
+            "bytes720": 277657,
+            "crf": 26,
+            "key": "placeholder-10.mp4|10-15"
+          }
+        ],
+        "accent": "#5F7B93"
+      }
+    }
+  ]
+}

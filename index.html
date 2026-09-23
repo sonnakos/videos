@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Ákos Sonnevend — Video Editor &amp; Content Strategist</title>
+  <meta name="description" content="Short-form, brand films and event edits by Ákos Sonnevend, a video editor and content strategist based in Herning, Denmark. Shot on Sony and DJI, finished in DaVinci Resolve.">
+  <!-- SITE_URL: tools/set-url.mjs rewrites every absolute URL below -->
+  <link rel="canonical" href="https://sonnevend-portfolio.example/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sonnevend-portfolio.example/">
+  <meta property="og:title" content="Ákos Sonnevend — Video Editor &amp; Content Strategist">
+  <meta property="og:description" content="A contact sheet of recent edits: short-form, brand films and event coverage. Based in Herning, Denmark.">
+  <meta property="og:image" content="https://sonnevend-portfolio.example/assets/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://sonnevend-portfolio.example/assets/og-image.jpg">
+  <meta name="theme-color" content="#F5F1EA">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/playfair-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script>document.documentElement.classList.add('js')</script>
+  <script type="module" src="main.js"></script>
+</head>
+<body>
+  <svg width="0" height="0" class="defs" aria-hidden="true" focusable="false">
+    <symbol id="i-ast" viewBox="0 0 24 24">
+      <path d="M12 1.5v21M1.5 12h21M4.6 4.6l14.8 14.8M19.4 4.6L4.6 19.4" fill="none" stroke="currentColor" stroke-width="2.6"/>
+    </symbol>
+  </svg>
+
+  <a class="skip micro" href="#work">Skip to work</a>
+
+  <header class="site-header" id="site-header">
+    <div class="site-header__in wrap">
+      <a class="brand micro" href="#top"><svg class="ast" aria-hidden="true" focusable="false"><use href="#i-ast"/></svg>Sonnevend Ákos</a>
+      <a class="header-cta micro" href="#contact">Available for projects <span aria-hidden="true">→</span></a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ================================================================ HERO -->
+    <section class="hero" aria-labelledby="hero-title">
+      <h1 id="hero-title" class="sr-only">Reel — Ákos Sonnevend, Video Editor &amp; Content Strategist</h1>
+
+      <div class="hero-reel" id="hero-reel">
+        <video class="hero-reel__video" data-play="hero" muted loop playsinline preload="none"
+               poster="assets/posters/hero-a.webp" width="1280" height="720" aria-hidden="true">
+          <source media="(max-width: 767px)" src="assets/clips/hero-a-720.mp4" type="video/mp4">
+          <source src="assets/clips/hero-a.mp4" type="video/mp4">
+        </video>
+        <!-- Inverse mask: a paper-coloured sheet with REEL cut out of it sits on top of the video.
+             REEL is outlined from Anton (tools/build-glyphs.py), so the cut never waits for a webfont. -->
+        <svg class="hero-reel__cut" viewBox="0 0 1000 594" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <defs>
+            <mask id="reel-cut" maskUnits="userSpaceOnUse" x="-4" y="-4" width="1008" height="602">
+              <rect x="-4" y="-4" width="1008" height="602" fill="#fff"/>
+              <path fill="#000" d="M-18 577.5V17H154Q197 17 218.9 36.6Q240.9 56.2 248.4 91.4Q255.9 126.6 255.9 174Q255.9 219.9 244.3 247.2Q232.6 274.6 200.5 285.1Q226.9 290.6 237.6 311.4Q248.2 332.3 248.2 365.4V577.5H137.7V358.1Q137.7 333.6 127.7 327.7Q117.7 321.8 95.4 321.8V577.5ZM96 224.6H123.1Q146.3 224.6 146.3 174Q146.3 141.2 141.2 131Q136.1 120.8 122.1 120.8H96ZM279.8 577.5V17H504V125.3H393.8V234.5H499.5V339.9H393.8V468.3H511.3V577.5ZM535.2 577.5V17H759.4V125.3H649.2V234.5H754.9V339.9H649.2V468.3H766.7V577.5ZM790.6 577.5V17H902.7V482H1018V577.5Z"/>
+            </mask>
+          </defs>
+          <rect x="-4" y="-4" width="1008" height="602" fill="#F5F1EA" mask="url(#reel-cut)"/>
+        </svg>
+        <p class="hero-reel__fallback" aria-hidden="true">Reel</p>
+      </div>
+
+      <div class="hero__row">
+        <p class="side-text side-text--left micro" aria-hidden="true">Editing · Color grading</p>
+        <p class="side-text side-text--right micro" aria-hidden="true">Motion design · Strategy</p>
+      <div class="hero__body wrap">
+
+        <div class="hero__intro">
+          <p class="micro hero__hello">Hello, I’m</p>
+          <p class="hero__name">Ákos Sonnevend</p>
+          <p class="micro hero__role">Video editor &amp; content strategist</p>
+          <p class="hero__lede">I edit short-form, brand films and event coverage in DaVinci Resolve, shoot on my own Sony and DJI kit, and write my motion-graphics overlays in code. Cutting since 2019, from Herning, Denmark.</p>
+          <p class="hero__sign" aria-hidden="true">Ákos</p>
+        </div>
+
+        <figure class="hero__portrait">
+          <span class="hero__disc" aria-hidden="true"></span>
+          <img data-slot="portrait" class="hero__img" src="assets/img/portrait-720.webp"
+               srcset="assets/img/portrait-720.webp 720w, assets/img/portrait-1400.webp 1200w"
+               sizes="(max-width: 767px) 78vw, 30vw" width="1200" height="1600"
+               alt="Ákos Sonnevend" decoding="async">
+          <div class="stamp" aria-hidden="true">
+            <svg viewBox="0 0 200 200" focusable="false" data-bg="#1A1A18">
+              <defs><path id="stamp-ring" d="M100 100m-76 0a76 76 0 1 1 152 0a76 76 0 1 1-152 0"/></defs>
+              <circle cx="100" cy="100" r="99" fill="#1A1A18"/>
+              <text class="stamp__text" fill="#F5F1EA"><textPath href="#stamp-ring" textLength="474" lengthAdjust="spacing">OPEN FOR NEW PROJECTS ✳ AVAILABLE WORLDWIDE ✳</textPath></text>
+              <use href="#i-ast" x="78" y="78" width="44" height="44" color="#F03C20"/>
+            </svg>
+          </div>
+        </figure>
+      </div>
+      </div>
+    </section>
+
+    <!-- ============================================================= GALLERY -->
+    <section class="work section" id="work" aria-labelledby="work-title">
+      <div class="wrap">
+        <span class="sec-num" aria-hidden="true">001</span>
+        <header class="work__head">
+          <h2 class="work__title display-xl" id="work-title"><span>Selected</span> <span class="terra">Work</span></h2>
+          <div class="work__aside">
+            <p class="work__lede">A contact sheet of recent edits. Every frame is a live loop from the finished cut — open one for the full project.</p>
+            <p class="micro work__scroll">Scroll to explore <span aria-hidden="true">↓</span></p>
+          </div>
+        </header>
+        <ul class="sheet" id="sheet" aria-label="Projects"></ul>
+        <noscript><p class="work__noscript">The contact sheet needs JavaScript to play the clips.</p></noscript>
+      </div>
+    </section>
+
+    <!-- =============================================================== ABOUT -->
+    <section class="about section" id="about" aria-labelledby="about-title">
+      <div class="wrap about__grid">
+        <span class="sec-num" aria-hidden="true">002</span>
+        <h2 class="micro about__label" id="about-title">About</h2>
+        <figure class="about__photo">
+          <img data-slot="about" src="assets/img/about-720.webp"
+               srcset="assets/img/about-720.webp 720w, assets/img/about-1400.webp 1080w"
+               sizes="(max-width: 767px) 70vw, 28vw" width="1080" height="1350"
+               alt="Ákos Sonnevend at work" loading="lazy" decoding="async">
+        </figure>
+        <div class="about__text">
+          <span class="about__mark" aria-hidden="true">“</span>
+          <p class="about__pull">I edit the way I train: measure what holds attention, then cut for it.</p>
+          <p class="about__body">I grew up in Budapest and now live and study in Herning, Denmark. I have cut video since 2019, shooting on my own Sony and DJI kit and finishing in DaVinci Resolve. I built DR1VN, a 106-member run club, and the performance-tracking apps I test on myself.</p>
+        </div>
+        <ul class="facts about__facts">
+          <li class="micro">Based in Herning, Denmark</li>
+          <li class="micro">Editing since 2019</li>
+          <li class="micro">Sony · DJI · DaVinci Resolve</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ SERVICES -->
+    <section class="services section" id="services" aria-labelledby="services-title">
+      <div class="wrap"><span class="sec-num" aria-hidden="true">003</span></div>
+      <div class="band">
+        <div class="band__clip" id="band-clip"></div>
+        <h2 class="band__title display-l" id="services-title"><span>What you</span> <span>can book</span></h2>
+      </div>
+      <div class="wrap">
+        <ol class="svc">
+          <li class="svc__item">
+            <span class="svc__num" aria-hidden="true">01</span>
+            <h3 class="svc__title">Short-form content</h3>
+            <p class="svc__desc">Reels, TikTok and Shorts, cut from your footage or mine — 3 to 5 edits a week.</p>
+            <dl class="svc__meta">
+              <div><dt class="micro">You get</dt><dd>9:16 edits with burned-in captions</dd></div>
+              <div><dt class="micro">Turnaround</dt><dd>48 hours per edit</dd></div>
+            </dl>
+          </li>
+          <li class="svc__item">
+            <span class="svc__num" aria-hidden="true">02</span>
+            <h3 class="svc__title">Brand film</h3>
+            <p class="svc__desc">A 60–90 second film about your brand, from structure to colour grade.</p>
+            <dl class="svc__meta">
+              <div><dt class="micro">You get</dt><dd>16:9 master + 9:16 recut</dd></div>
+              <div><dt class="micro">Turnaround</dt><dd>7–10 days</dd></div>
+            </dl>
+          </li>
+          <li class="svc__item">
+            <span class="svc__num" aria-hidden="true">03</span>
+            <h3 class="svc__title">Event coverage</h3>
+            <p class="svc__desc">Shooting and editing in one pair of hands, so nothing gets lost in the handover.</p>
+            <dl class="svc__meta">
+              <div><dt class="micro">You get</dt><dd>1 highlight film + 5 shorts</dd></div>
+              <div><dt class="micro">Turnaround</dt><dd>5 days</dd></div>
+            </dl>
+          </li>
+          <li class="svc__item">
+            <span class="svc__num" aria-hidden="true">04</span>
+            <h3 class="svc__title">Content strategy</h3>
+            <p class="svc__desc">Not just the edit: what goes out, when, and which hook opens it.</p>
+            <dl class="svc__meta">
+              <div><dt class="micro">You get</dt><dd>A monthly content plan</dd></div>
+              <div><dt class="micro">Turnaround</dt><dd>Planned monthly</dd></div>
+            </dl>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============================================================= CONTACT -->
+    <section class="contact section" id="contact" aria-labelledby="contact-title">
+      <div class="wrap contact__grid">
+        <span class="sec-num" aria-hidden="true">004</span>
+        <h2 class="contact__title display-xl" id="contact-title"><span>Let’s make</span> <span class="terra">something</span></h2>
+
+        <div class="qr">
+          <img class="qr__code" src="assets/qr.svg" width="200" height="200" alt="QR code that opens this page">
+          <div class="qr__note">
+            <svg class="qr__arrow" viewBox="0 0 120 90" aria-hidden="true" focusable="false">
+              <path d="M112 80C96 84 70 80 55 62 42 47 44 26 30 16 22 10 12 10 6 13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+              <path d="M16 4 5 13l13 5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <p class="micro">Scan to share this page</p>
+            <button class="btn-line micro" type="button" id="copy-link">Copy link</button>
+          </div>
+        </div>
+
+        <ul class="contact__list">
+          <!-- CONTACT: replace the three placeholders before publishing -->
+          <li><span class="micro">Email</span><a href="mailto:hello@example.com">hello@example.com</a></li>
+          <li><span class="micro">Instagram</span><a href="https://www.instagram.com/" rel="noopener">@handle</a></li>
+          <li><span class="micro">LinkedIn</span><a href="https://www.linkedin.com/" rel="noopener">linkedin.com/in/…</a></li>
+        </ul>
+
+        <a class="cta" href="mailto:hello@example.com?subject=New%20project">Start a project <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap site-footer__row">
+      <p class="micro">© 2026 Sonnevend Ákos</p>
+      <p class="micro">Herning, DK</p>
+    </div>
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <span class="marquee__run">Available for projects <svg class="ast"><use href="#i-ast"/></svg> Editing <svg class="ast"><use href="#i-ast"/></svg> Color <svg class="ast"><use href="#i-ast"/></svg> Motion <svg class="ast"><use href="#i-ast"/></svg> Available for projects <svg class="ast"><use href="#i-ast"/></svg> Editing <svg class="ast"><use href="#i-ast"/></svg> Color <svg class="ast"><use href="#i-ast"/></svg> Motion <svg class="ast"><use href="#i-ast"/></svg> Available for projects <svg class="ast"><use href="#i-ast"/></svg> Editing <svg class="ast"><use href="#i-ast"/></svg> Color <svg class="ast"><use href="#i-ast"/></svg> Motion <svg class="ast"><use href="#i-ast"/></svg> Available for projects <svg class="ast"><use href="#i-ast"/></svg> Editing <svg class="ast"><use href="#i-ast"/></svg> Color <svg class="ast"><use href="#i-ast"/></svg> Motion <svg class="ast"><use href="#i-ast"/></svg> Available for projects <svg class="ast"><use href="#i-ast"/></svg> Editing <svg class="ast"><use href="#i-ast"/></svg> Color <svg class="ast"><use href="#i-ast"/></svg> Motion <svg class="ast"><use href="#i-ast"/></svg> Available for projects <svg class="ast"><use href="#i-ast"/></svg> Editing <svg class="ast"><use href="#i-ast"/></svg> Color <svg class="ast"><use href="#i-ast"/></svg> Motion <svg class="ast"><use href="#i-ast"/></svg></span>
+        <span class="marquee__run">Available for projects <svg class="ast"><use href="#i-ast"/></svg> Editing <svg class="ast"><use href="#i-ast"/></svg> Color <svg class="ast"><use href="#i-ast"/></svg> Motion <svg class="ast"><use href="#i-ast"/></svg> Available for projects <svg class="ast"><use href="#i-ast"/></svg> Editing <svg class="ast"><use href="#i-ast"/></svg> Color <svg class="ast"><use href="#i-ast"/></svg> Motion <svg class="ast"><use href="#i-ast"/></svg> Available for projects <svg class="ast"><use href="#i-ast"/></svg> Editing <svg class="ast"><use href="#i-ast"/></svg> Color <svg class="ast"><use href="#i-ast"/></svg> Motion <svg class="ast"><use href="#i-ast"/></svg> Available for projects <svg class="ast"><use href="#i-ast"/></svg> Editing <svg class="ast"><use href="#i-ast"/></svg> Color <svg class="ast"><use href="#i-ast"/></svg> Motion <svg class="ast"><use href="#i-ast"/></svg> Available for projects <svg class="ast"><use href="#i-ast"/></svg> Editing <svg class="ast"><use href="#i-ast"/></svg> Color <svg class="ast"><use href="#i-ast"/></svg> Motion <svg class="ast"><use href="#i-ast"/></svg> Available for projects <svg class="ast"><use href="#i-ast"/></svg> Editing <svg class="ast"><use href="#i-ast"/></svg> Color <svg class="ast"><use href="#i-ast"/></svg> Motion <svg class="ast"><use href="#i-ast"/></svg></span>
+      </div>
+    </div>
+  </footer>
+
+  <p class="draft-badge micro" id="draft-badge" hidden>Draft · placeholder footage</p>
+
+  <!-- ====================================================== PROJECT WORLD -->
+  <dialog class="pw" id="pw" aria-labelledby="pw-title">
+    <div class="pw__bg" aria-hidden="true"></div>
+    <div class="pw__scroll" data-close-area>
+      <div class="pw__inner wrap" data-close-area>
+        <header class="pw__head">
+          <p class="pw__num" id="pw-num" aria-hidden="true"></p>
+          <div class="pw__heading">
+            <p class="micro pw__cat" id="pw-cat"></p>
+            <h2 class="pw__title display-l" id="pw-title" tabindex="-1"></h2>
+          </div>
+        </header>
+        <div class="pw__clips" id="pw-clips" data-close-area></div>
+        <figure class="pw__full" id="pw-full" hidden>
+          <video controls playsinline preload="none"></video>
+          <figcaption class="micro" id="pw-full-cap"></figcaption>
+        </figure>
+        <dl class="pw__facts">
+          <div><dt class="micro">What I did</dt><dd id="pw-did"></dd></div>
+          <div><dt class="micro">Tools</dt><dd id="pw-tools"></dd></div>
+          <div><dt class="micro">Turnaround</dt><dd id="pw-turn"></dd></div>
+        </dl>
+        <p class="pw__summary" id="pw-summary"></p>
+        <div class="pw__foot">
+          <button class="btn-line btn-line--stage micro" type="button" id="pw-next">Next project <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+    </div>
+    <button class="pw__close" type="button" id="pw-close" aria-label="Close project">✕</button>
+  </dialog>
+</body>
+</html>
