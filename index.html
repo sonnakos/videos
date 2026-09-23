@@ -31,6 +31,16 @@
     <symbol id="i-ast" viewBox="0 0 24 24">
       <path d="M12 1.5v21M1.5 12h21M4.6 4.6l14.8 14.8M19.4 4.6L4.6 19.4" fill="none" stroke="currentColor" stroke-width="2.6"/>
     </symbol>
+    <!-- grease-pencil loops: how a photographer marks the frame to enlarge on a contact sheet -->
+    <symbol id="loop-1" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <path d="M22 9C46 1 87 2 96 29c7 26-3 62-38 68C28 102 3 87 3 56 3 28 17 10 45 5c11-2 21-1 28 3" fill="none" vector-effect="non-scaling-stroke"/>
+    </symbol>
+    <symbol id="loop-2" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <path d="M77 7c19 8 24 38 19 63-6 25-41 30-66 25C8 90 0 64 4 38 8 12 32 2 58 3c9 0 17 3 23 7" fill="none" vector-effect="non-scaling-stroke"/>
+    </symbol>
+    <symbol id="loop-3" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <path d="M11 23C22 5 60 0 84 8c18 7 16 52 10 72-8 20-54 21-76 12C2 84-1 50 6 30c3-9 10-15 19-18" fill="none" vector-effect="non-scaling-stroke"/>
+    </symbol>
   </svg>
 
   <a class="skip micro" href="#work">Skip to work</a>
@@ -61,8 +71,15 @@
               <rect x="-4" y="-4" width="1008" height="602" fill="#fff"/>
               <path fill="#000" d="M-18 577.5V17H154Q197 17 218.9 36.6Q240.9 56.2 248.4 91.4Q255.9 126.6 255.9 174Q255.9 219.9 244.3 247.2Q232.6 274.6 200.5 285.1Q226.9 290.6 237.6 311.4Q248.2 332.3 248.2 365.4V577.5H137.7V358.1Q137.7 333.6 127.7 327.7Q117.7 321.8 95.4 321.8V577.5ZM96 224.6H123.1Q146.3 224.6 146.3 174Q146.3 141.2 141.2 131Q136.1 120.8 122.1 120.8H96ZM279.8 577.5V17H504V125.3H393.8V234.5H499.5V339.9H393.8V468.3H511.3V577.5ZM535.2 577.5V17H759.4V125.3H649.2V234.5H754.9V339.9H649.2V468.3H766.7V577.5ZM790.6 577.5V17H902.7V482H1018V577.5Z"/>
             </mask>
+            <!-- tile size is set from the rendered width (js/ui.js) so the grain matches the page's -->
+            <pattern id="reel-grain" patternUnits="userSpaceOnUse" width="178" height="178">
+              <image href="assets/tex/grain-paper.webp" width="178" height="178"/>
+            </pattern>
           </defs>
-          <rect x="-4" y="-4" width="1008" height="602" fill="#F5F1EA" mask="url(#reel-cut)"/>
+          <g mask="url(#reel-cut)">
+            <rect x="-4" y="-4" width="1008" height="602" fill="#F5F1EA"/>
+            <rect x="-4" y="-4" width="1008" height="602" fill="url(#reel-grain)"/>
+          </g>
         </svg>
         <p class="hero-reel__fallback" aria-hidden="true">Reel</p>
       </div>
@@ -139,59 +156,14 @@
       </div>
     </section>
 
-    <!-- ============================================================ SERVICES -->
-    <section class="services section" id="services" aria-labelledby="services-title">
-      <div class="wrap"><span class="sec-num" aria-hidden="true">003</span></div>
-      <div class="band">
-        <div class="band__clip" id="band-clip"></div>
-        <h2 class="band__title display-l" id="services-title"><span>What you</span> <span>can book</span></h2>
-      </div>
-      <div class="wrap">
-        <ol class="svc">
-          <li class="svc__item">
-            <span class="svc__num" aria-hidden="true">01</span>
-            <h3 class="svc__title">Short-form content</h3>
-            <p class="svc__desc">Reels, TikTok and Shorts, cut from your footage or mine — 3 to 5 edits a week.</p>
-            <dl class="svc__meta">
-              <div><dt class="micro">You get</dt><dd>9:16 edits with burned-in captions</dd></div>
-              <div><dt class="micro">Turnaround</dt><dd>48 hours per edit</dd></div>
-            </dl>
-          </li>
-          <li class="svc__item">
-            <span class="svc__num" aria-hidden="true">02</span>
-            <h3 class="svc__title">Brand film</h3>
-            <p class="svc__desc">A 60–90 second film about your brand, from structure to colour grade.</p>
-            <dl class="svc__meta">
-              <div><dt class="micro">You get</dt><dd>16:9 master + 9:16 recut</dd></div>
-              <div><dt class="micro">Turnaround</dt><dd>7–10 days</dd></div>
-            </dl>
-          </li>
-          <li class="svc__item">
-            <span class="svc__num" aria-hidden="true">03</span>
-            <h3 class="svc__title">Event coverage</h3>
-            <p class="svc__desc">Shooting and editing in one pair of hands, so nothing gets lost in the handover.</p>
-            <dl class="svc__meta">
-              <div><dt class="micro">You get</dt><dd>1 highlight film + 5 shorts</dd></div>
-              <div><dt class="micro">Turnaround</dt><dd>5 days</dd></div>
-            </dl>
-          </li>
-          <li class="svc__item">
-            <span class="svc__num" aria-hidden="true">04</span>
-            <h3 class="svc__title">Content strategy</h3>
-            <p class="svc__desc">Not just the edit: what goes out, when, and which hook opens it.</p>
-            <dl class="svc__meta">
-              <div><dt class="micro">You get</dt><dd>A monthly content plan</dd></div>
-              <div><dt class="micro">Turnaround</dt><dd>Planned monthly</dd></div>
-            </dl>
-          </li>
-        </ol>
-      </div>
-    </section>
-
     <!-- ============================================================= CONTACT -->
     <section class="contact section" id="contact" aria-labelledby="contact-title">
+      <div class="wrap"><span class="sec-num" aria-hidden="true">003</span></div>
+      <!-- colour block running to the right edge of the screen, one clip half inside it -->
+      <div class="band">
+        <div class="band__clip" id="band-clip"></div>
+      </div>
       <div class="wrap contact__grid">
-        <span class="sec-num" aria-hidden="true">004</span>
         <h2 class="contact__title display-xl" id="contact-title"><span>Let’s make</span> <span class="terra">something</span></h2>
 
         <div class="qr">

@@ -6,6 +6,9 @@ import { register } from './playback.js';
 const LETTERS = 'ABCDEFGH';
 const ROW_UNIT = 4; // px, matches grid-auto-rows in styles.css
 
+// small stable hash, so each frame keeps the same pencil loop and tilt on every visit
+const hash = (str) => [...str].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) >>> 0, 7);
+
 // ---- one frame -------------------------------------------------------------------
 export function tileEl(p, ci) {
   const c = p.clips[ci];
@@ -19,6 +22,8 @@ export function tileEl(p, ci) {
   btn.style.setProperty('--accent', p.accent);
   btn.style.setProperty('--chip-bg', chip.bg);
   btn.style.setProperty('--chip-fg', chip.fg);
+  const h = hash(`${p.slug}-${ci}`);
+  btn.style.setProperty('--rot', `${(h % 9) - 4}deg`);
   btn.setAttribute('aria-label', `Open project ${p.num}: ${p.name}, ${p.category}`);
   btn.innerHTML =
     `<span class="tile__in">` +
@@ -29,7 +34,8 @@ export function tileEl(p, ci) {
       `</video>` +
       `<span class="tile__num micro">${p.num}<span aria-hidden="true">${LETTERS[ci] || ''}</span></span>` +
       `<span class="tile__cap"><span class="tile__name">${esc(p.name)}</span><span class="tile__cat micro">${esc(p.category)}</span></span>` +
-    `</span>`;
+    `</span>` +
+    `<svg class="tile__mark" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><use href="#loop-${((h >>> 4) % 3) + 1}"/></svg>`;
   return btn;
 }
 

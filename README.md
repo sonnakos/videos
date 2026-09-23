@@ -18,14 +18,23 @@ node dev-server.mjs          # http://localhost:4174  (Range-kéréseket is kisz
 
 | Fájl | Mire való |
 |---|---|
-| `index.html` | az oldal (fejléc, hero, galéria, rólam, szolgáltatások, kapcsolat, lábléc, projekt-világ) |
+| `index.html` | az oldal (fejléc, hero, galéria, rólam, kapcsolat, lábléc, projekt-világ) |
 | `styles.css` | tokenek (színek, betűk, rács), minden szakasz, mozgás, `prefers-reduced-motion` |
 | `main.js`, `js/*.js` | belépési pont + modulok: lejátszás-készlet (max. 6 videó), galéria, projekt-világ, UI |
 | `content/projects.json` | **az egyetlen tartalomfájl**: projektek, klip-tartományok, szövegek |
 | `assets/clips`, `assets/posters`, `assets/full` | a `tools/clips.mjs` kimenete — kézzel nem kell hozzányúlni |
 | `assets/img`, `assets/og-image.jpg`, `assets/qr.svg` | portré, About-fotó, megosztási kép, QR |
+| `assets/tex/` | papírszemcse, filmszemcse (a sötét vetítéshez), raszterpontos terrakotta kör — `python3 tools/make-textures.py` |
 | `fonts/` | Anton, Archivo, Playfair Display, Caveat (woff2, helyből) + `glyphs.woff2` (→ ↗ ✓ ✕ ✳ saját rajzolású jelek, hogy iPhone-on se legyen belőlük emoji) |
 | `tools/` | klip-, kép-, QR- és ellenőrző szkriptek (lent) |
+
+## Ami az egérre reagál
+
+- **REEL:** a felvétel finoman elcsúszik a betűk mögött az egér felé (csak `transform`, rAF-ben, és leáll, ha az egér nem mozog). Érintőképernyőn és csökkentett mozgásnál kikapcsol.
+- **Kontaktlap:** a kiválasztott képkockát (hover vagy billentyűs fókusz) piros zsírkréta-karika keríti be — ahogy a fotós bekarikázza a kontaktlapon, amit nagyítani akar. Három kézzel rajzolt változat, képkockánként rögzített dőléssel.
+- **Fejléc:** a ✳ egy nyolcadot fordul hoverre.
+
+A szemcse csak a papíron és a sötét vetítésen van, a videók fölött nincs — azok élesek maradnak.
 
 ## Új projekt felvétele (a 11. szakasz helyett)
 
@@ -126,8 +135,8 @@ Cloudflare Pages: ugyanez a mappa feltöltve, build parancs nélkül. Utána `no
 - [ ] `content/projects.json`: 8–12 valódi projekt, ebből 2–3 `featured` + `full` — a helykitöltők törlése (ekkor eltűnik a DRAFT jelzés)
 - [ ] ügyfél-engedély minden ügyfélmunkára (OOM, Geri, VIA, …) és a DR1VN/futóklub arcaira → `cleared`
 - [ ] `hero`: fekvő klip a REEL-betűk mögé
+- [ ] a kapcsolat előtti piros blokk klipje: alapból az első kiemelt projekt utolsó klipje; másikat a `projects.json` tetején adhatsz meg: `"bandClip": "<slug>:<klip sorszáma 0-tól>"`
 - [ ] portré + About-fotó (`tools/images.mjs`), megosztási kép (`og`)
 - [ ] kapcsolat: e-mail, Instagram, LinkedIn az `index.html`-ben (most `hello@example.com` / `@handle` helykitöltő)
-- [ ] szolgáltatások: a 4 blokk számai (3–5 vágás/hét, 48 óra, 7–10 nap, 5 nap) a briefből jönnek — erősítsd meg
 - [ ] az About-szöveg és a hero-leírás az én megfogalmazásom a brief tényeiből — javítsd, ha nem a te hangod
 - [ ] végleges cím → `tools/set-url.mjs`

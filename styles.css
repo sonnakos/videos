@@ -25,6 +25,8 @@
   --frame: #E6DFD3;     /* an empty contact-sheet frame, before its poster loads */
   --stage-ink: #D9D3C8; /* secondary text on stage, 12:1 */
   --stage-rule: rgb(245 241 234 / 0.2);
+  --grain-paper: url("assets/tex/grain-paper.webp") 0 0 / 256px 256px;  /* alpha-only print grain (tools/make-textures.py) */
+  --grain-stage: url("assets/tex/grain-stage.webp") 0 0 / 256px 256px;  /* film grain for the dark room */
 
   --fs-display-xl: clamp(3.5rem, 14vw, 13rem);
   --fs-display-l: clamp(2.5rem, 7vw, 6rem);
@@ -63,7 +65,7 @@ html {
 }
 body {
   margin: 0;
-  background: var(--paper);
+  background: var(--grain-paper), var(--paper);
   color: var(--ink);
   font: 400 var(--fs-body)/1.6 var(--f-sans);
   -webkit-font-smoothing: antialiased;
@@ -134,7 +136,7 @@ button { font: inherit; color: inherit; }
 .site-header {
   position: fixed; inset: 0 0 auto 0; z-index: 40;
   height: var(--header-h);
-  background: rgb(245 241 234 / 0.92);
+  background: var(--grain-paper), rgb(245 241 234 / 0.92);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
@@ -150,7 +152,8 @@ button { font: inherit; color: inherit; }
   min-height: 44px; text-decoration: none; color: var(--ink);
   white-space: nowrap;
 }
-.brand .ast { width: 1.15em; height: 1.15em; }
+.brand .ast { width: 1.15em; height: 1.15em; transition: transform 160ms ease-out; }
+.brand:hover .ast { transform: rotate(45deg); }
 .header-cta { position: relative; }
 .header-cta::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: 10px; height: 1px; background: var(--ink);
@@ -177,6 +180,7 @@ main { padding-top: var(--header-h); }
   object-fit: cover;
   background: var(--terra); /* if neither poster nor video loads, the letters are solid terracotta */
 }
+.hero-reel--drift .hero-reel__video { transform: scale(1.06); will-change: transform; }
 .hero-reel__cut { position: absolute; inset: -1px; width: calc(100% + 2px); height: calc(100% + 2px); max-width: none; pointer-events: none; }
 .hero-reel__fallback {
   display: none;
@@ -236,7 +240,7 @@ main { padding-top: var(--header-h); }
   position: absolute; z-index: 0;
   width: 122%; aspect-ratio: 1; border-radius: 50%;
   left: 18%; top: 12%;
-  background: var(--terra);
+  background: url("assets/tex/halftone-disc.webp") center / contain no-repeat; /* terracotta core, screened rim */
 }
 .hero__img {
   position: relative; z-index: 1;
@@ -255,8 +259,8 @@ main { padding-top: var(--header-h); }
 /* ------------------------------------------------------------- sections */
 .section { position: relative; padding-top: clamp(28px, 3.5vw, 56px); }
 .section > .wrap { position: relative; }
-.work { border-top: 1px solid var(--hairline); margin-top: var(--space-section); }
-.about, .services, .contact { border-top: 1px solid var(--hairline); margin-top: var(--space-section); }
+.work { border-top: 1px solid var(--hairline); margin-top: var(--space-section); overflow-x: clip; } /* pencil loops may pass the screen edge */
+.about, .contact { border-top: 1px solid var(--hairline); margin-top: var(--space-section); }
 
 /* big vertical section number, hanging outside the grid */
 .sec-num {
@@ -269,7 +273,7 @@ main { padding-top: var(--header-h); }
   pointer-events: none;
 }
 /* hangs out of the content grid into the page margin, never past the screen edge */
-.work .sec-num, .services .sec-num { right: calc(var(--margin) * 0.2); }
+.work .sec-num { right: calc(var(--margin) * 0.2); }
 .about .sec-num, .contact .sec-num { left: calc(var(--margin) * 0.2); transform: rotate(180deg); }
 
 /* ------------------------------------------------------ gallery / sheet */
@@ -331,6 +335,21 @@ main { padding-top: var(--header-h); }
   transition: transform 240ms var(--ease-hover);
 }
 
+/* grease-pencil loop drawn round the chosen frame, as on a real contact sheet */
+.tile__mark {
+  position: absolute; z-index: 4; inset: -14% -9%;  /* loose enough that the stroke clears the caption */
+  width: 118%; height: 128%; max-width: none;
+  overflow: visible; pointer-events: none;
+  stroke: var(--flare); stroke-width: 3.5px; stroke-linecap: round;
+  opacity: 0;
+  transform: rotate(var(--rot, 0deg)) scale(0.9);
+  transition: opacity 240ms var(--ease-hover), transform 240ms var(--ease-hover);
+}
+.tile:focus-visible .tile__mark { opacity: 1; transform: rotate(var(--rot, 0deg)); }
+@media (hover: hover) {
+  .tile:hover .tile__mark { opacity: 1; transform: rotate(var(--rot, 0deg)); }
+}
+
 /* selection: the chosen frame lifts, the rest of the sheet steps back */
 .tile:focus-visible { transform: scale(1.035); z-index: 2; transition-delay: 0ms; }
 .tile:focus-visible .tile__cap { transform: none; }
@@ -380,8 +399,8 @@ main { padding-top: var(--header-h); }
 .facts li { padding: 14px 0; border-bottom: 1px solid var(--hairline); color: var(--ink); }
 .about__facts { grid-column: 6 / span 5; grid-row: 3; }
 
-/* ------------------------------------------------------------- services */
-.services { overflow-x: clip; }
+/* ------------------------------------------------ colour block before contact */
+.contact { overflow-x: clip; }
 .band {
   position: relative;
   display: grid;
@@ -391,6 +410,7 @@ main { padding-top: var(--header-h); }
   max-width: var(--max);
   margin-inline: auto;
   padding: clamp(40px, 6vw, 96px) var(--margin) 0;
+  margin-bottom: clamp(48px, 7vw, 112px);
 }
 .band::before {        /* the red block runs from column 5 to the right edge of the screen */
   content: ""; position: absolute; z-index: 0;
@@ -400,38 +420,6 @@ main { padding-top: var(--header-h); }
   background: var(--flare);
 }
 .band__clip { grid-column: 3 / span 5; grid-row: 1; align-self: end; position: relative; z-index: 1; }
-.band__title {
-  grid-column: 9 / span 4; grid-row: 1; align-self: start; position: relative; z-index: 1;
-  display: flex; flex-direction: column;
-  color: var(--ink);     /* Anton on flare, large text: 4.4:1 */
-}
-.svc {
-  display: grid;
-  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
-  column-gap: var(--gap);
-  row-gap: clamp(40px, 5vw, 72px);
-  margin-top: clamp(56px, 7vw, 112px);
-}
-.svc__item {
-  grid-column: span 6;
-  display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: clamp(16px, 2vw, 32px);
-  border-top: 1px solid var(--hairline);
-  padding-top: 20px;
-}
-.svc__item:nth-child(even) { margin-top: clamp(0px, 6vw, 96px); }
-.svc__num {
-  grid-row: 1 / span 3;
-  font: 400 var(--fs-display-l)/0.82 var(--f-display);
-  letter-spacing: -0.02em;
-  color: var(--terra);
-  margin-left: calc(var(--gap) * -0.5);
-}
-.svc__title { font: 700 1.375rem/1.2 var(--f-sans); text-transform: uppercase; letter-spacing: 0.01em; }
-.svc__desc { margin-top: 10px; max-width: 44ch; }
-.svc__meta { margin-top: 18px; border-top: 1px solid var(--hairline); }
-.svc__meta > div { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--hairline); }
-.svc__meta dt { color: var(--ink-soft); padding-top: 0.25em; }
-.svc__meta dd { text-align: right; font-weight: 500; }
 
 /* -------------------------------------------------------------- contact */
 .contact__grid {
@@ -486,15 +474,18 @@ main { padding-top: var(--header-h); }
 .draft-badge[hidden] { display: none; }
 
 /* -------------------------------------------------------- project world */
+/* the reserved scrollbar gutter sits outside anything position:fixed can paint, so the
+   page itself turns stage-dark while a project is open */
+html:has(.pw[open]) { background: var(--stage); }
 .pw {
-  position: fixed; inset: 0 auto 0 0;
-  width: 100vw; height: 100%; max-width: none; max-height: none;   /* 100vw also covers the scrollbar gutter */
+  position: fixed; inset: 0;
+  width: 100%; height: 100%; max-width: none; max-height: none;
   margin: 0; padding: 0; border: 0;
   background: transparent; color: var(--paper);
   overflow: hidden;
 }
 .pw::backdrop { background: transparent; }
-.pw__bg { position: absolute; inset: 0; background: var(--stage); }
+.pw__bg { position: absolute; inset: 0; background: var(--grain-stage), var(--stage); }
 .pw__scroll { position: absolute; inset: 0; overflow-y: auto; overscroll-behavior: contain; }
 .pw__inner { position: relative; padding-top: 88px; padding-bottom: 96px; }
 .pw__head {
@@ -579,13 +570,9 @@ main { padding-top: var(--header-h); }
   .about__text { margin-top: 24px; }
   .about__mark { font-size: 6rem; }
 
-  .band { grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: 28px; padding-block: 40px 48px; }
-  .band::before { left: calc(var(--margin) + (100% - 2 * var(--margin) + var(--gap)) / 4); right: 0; bottom: 0; }
+  .band { grid-template-columns: repeat(4, minmax(0, 1fr)); padding-top: 40px; }
+  .band::before { left: calc(var(--margin) + (100% - 2 * var(--margin) + var(--gap)) / 4 * 1.5); right: 0; bottom: 32px; }
   .band__clip { grid-column: 1 / span 3; grid-row: 1; }
-  .band__title { grid-column: 2 / -1; grid-row: 2; padding: 0 0 8px var(--gap); }
-  .svc__item { grid-column: 1 / -1; }
-  .svc__item:nth-child(even) { margin-top: 0; }
-  .svc__num { margin-left: 0; }
 
   .contact__title .terra { padding-left: 0; }
   .qr, .contact__list { grid-column: 1 / -1; }

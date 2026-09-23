@@ -18,6 +18,11 @@ let current = null;  // { p, origin, trigger }
 let savedY = 0;
 let pushed = false;  // did we add a history entry for this opening?
 
+// some embedding frames refuse history changes; the world must still open and close without them
+function hist(method, state, url) {
+  try { history[method](state, '', url); return true; } catch { return false; }
+}
+
 const lead = () => $('.pw__clip video', clipsEl);
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`;
 const vt = () => typeof document.startViewTransition === 'function' && !reducedMotion.matches;
@@ -114,8 +119,7 @@ export function openProject(p, ci = 0, origin = null, trigger = null, { deep = f
   if (dlg.open || !p) return;
   current = { p, origin, trigger };
   savedY = scrollY;
-  pushed = !deep;
-  if (!deep) history.pushState({ pw: p.slug }, '', `#p/${p.slug}`);
+  pushed = !deep && hist('pushState', { pw: p.slug }, `#p/${p.slug}`);
 
   const canAnimate = origin && !reducedMotion.matches && origin.getBoundingClientRect().width > 0;
   if (canAnimate && vt()) {
@@ -147,7 +151,7 @@ function closeProject() {
   if (!dlg.open) return;
   const { origin, trigger } = current;
   pushed = false;
-  if (location.hash.startsWith('#p/')) history.replaceState(null, '', location.pathname + location.search);
+  if (location.hash.startsWith('#p/')) hist('replaceState', null, location.pathname + location.search);
   const refocus = () => trigger?.isConnected && trigger.focus({ preventScroll: true });
   const canAnimate = origin?.isConnected && !reducedMotion.matches;
 
@@ -184,7 +188,7 @@ function swapTo(p) {
   current = { ...current, p, origin: null };
   fill(p, 0);
   scroller.scrollTop = 0;
-  if (pushed) history.replaceState({ pw: p.slug }, '', `#p/${p.slug}`);
+  if (pushed) hist('replaceState', { pw: p.slug }, `#p/${p.slug}`);
   $('#pw-title').focus?.({ preventScroll: true });
 }
 

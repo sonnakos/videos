@@ -217,6 +217,11 @@ const desk = await newPage('desktop', { viewport: { width: 1440, height: 900 } }
     return { playing: !v.paused, advanced: +(v.currentTime - a).toFixed(2), fallback: document.querySelector('#hero-reel').classList.contains('hero-reel--fallback') };
   });
   gate('5b', 'REEL: video moves inside the letters', heroMoves.playing && heroMoves.advanced > 0.2 && !heroMoves.fallback, heroMoves);
+  await page.mouse.move(150, 200);
+  await page.waitForTimeout(900);
+  const drift = await page.evaluate(() => document.querySelector('.hero-reel__video').style.transform);
+  gate('H1', 'REEL: footage drifts behind the letters with the mouse (transform only)', /translate3d\((?!0%, 0%)/.test(drift), drift);
+  await page.mouse.move(720, 20);
 
   const maxPlaying = await scrollThrough(page, true);
   await scrollToSel(page, '#sheet', 200);
@@ -241,9 +246,18 @@ const desk = await newPage('desktop', { viewport: { width: 1440, height: 900 } }
   const hover = await page.evaluate(() => {
     const all = [...document.querySelectorAll('.sheet .tile')];
     const h = all.find((t) => t.matches(':hover'));
-    return { scale: getComputedStyle(h).transform, others: [...new Set(all.filter((t) => t !== h).map((t) => getComputedStyle(t).opacity))], cap: getComputedStyle(h.querySelector('.tile__cap')).transform };
+    const mark = h.querySelector('.tile__mark');
+    const use = mark.querySelector('use');
+    return {
+      scale: getComputedStyle(h).transform,
+      others: [...new Set(all.filter((t) => t !== h).map((t) => getComputedStyle(t).opacity))],
+      cap: getComputedStyle(h.querySelector('.tile__cap')).transform,
+      mark: getComputedStyle(mark).opacity,
+      loop: !!document.querySelector(use.getAttribute('href')) && use.getBoundingClientRect().width > 0,
+    };
   });
   gate('G2', 'hover: frame scales 1.035, the rest dim to 0.35, caption slides up', /1\.035/.test(hover.scale) && hover.others.join() === '0.35' && hover.cap === 'none', hover);
+  gate('G3', 'hover: grease-pencil loop drawn round the frame', hover.mark === '1' && hover.loop, { mark: hover.mark, loop: hover.loop });
   await page.screenshot({ path: join(OUT, 'desktop-hover.png') });
 
   // open / close the project world three ways
@@ -334,6 +348,7 @@ const desk = await newPage('desktop', { viewport: { width: 1440, height: 900 } }
   await desk.ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: new URL(BASE).origin });
   await scrollToSel(page, '#contact');
   await page.click('#copy-link');
+  await page.waitForFunction(() => document.querySelector('#copy-link').textContent !== 'Copy link', null, { timeout: 1500 }).catch(() => {});
   const copied = await page.evaluate(async () => ({ label: document.querySelector('#copy-link').textContent, clip: await navigator.clipboard.readText().catch(() => '?') }));
   await page.waitForTimeout(2200);
   const after = await page.evaluate(() => document.querySelector('#copy-link').textContent);
@@ -377,7 +392,8 @@ const desk = await newPage('desktop', { viewport: { width: 1440, height: 900 } }
   await page.waitForTimeout(1200);
   await page.screenshot({ path: join(OUT, 'mobile-gallery.png') });
   const ov = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, innerWidth }));
-  gate(7, 'mobile: scrollWidth === innerWidth', ov.scrollWidth === ov.innerWidth, ov);
+  // a mobile browser widens the layout viewport to fit overflowing content, so innerWidth alone can hide an overflow
+  gate(7, 'mobile: scrollWidth === innerWidth === device width (390)', ov.scrollWidth === ov.innerWidth && ov.innerWidth === 390, ov);
   gate('9d', 'mobile: never more than 6 videos playing', maxPlaying <= 6, `max ${maxPlaying}`);
   const small = await page.evaluate(() => [...document.querySelectorAll('.sheet video')].slice(0, 4).map((v) => v.currentSrc.split('/').pop()));
   gate('6b', 'mobile gets the 720 px clips', small.every((s) => s.includes('-720')), small);
@@ -400,9 +416,17 @@ const desk = await newPage('desktop', { viewport: { width: 1440, height: 900 } }
     const vis = [...document.querySelectorAll('.sheet video')].filter((v) => { const r = v.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight; });
     return { inView: vis.length, withPoster: vis.filter((v) => v.poster).length, tilesVisible: [...document.querySelectorAll('.sheet .tile__in')].every((t) => getComputedStyle(t).opacity === '1') };
   });
-  const anim = await page.evaluate(() => ({ stamp: getComputedStyle(document.querySelector('.stamp svg')).animationName, marquee: getComputedStyle(document.querySelector('.marquee__track')).animationName }));
+  await page.evaluate(() => scrollTo(0, 0));
+  await page.mouse.move(150, 200);
+  await page.waitForTimeout(500);
+  const anim = await page.evaluate(() => ({
+    stamp: getComputedStyle(document.querySelector('.stamp svg')).animationName,
+    marquee: getComputedStyle(document.querySelector('.marquee__track')).animationName,
+    drift: document.querySelector('.hero-reel__video').style.transform || 'none',
+  }));
+  await scrollToSel(page, '#sheet', 100);
   await page.screenshot({ path: join(OUT, 'reduced-motion-gallery.png') });
-  gate(10, 'reduced motion: no video plays, posters show, frames visible, stamp + marquee still', max === 0 && posters.withPoster === posters.inView && posters.inView > 0 && posters.tilesVisible && anim.stamp === 'none' && anim.marquee === 'none', { maxPlaying: max, ...posters, ...anim });
+  gate(10, 'reduced motion: no video plays, posters show, frames visible, stamp + marquee + REEL drift still', max === 0 && posters.withPoster === posters.inView && posters.inView > 0 && posters.tilesVisible && anim.stamp === 'none' && anim.marquee === 'none' && anim.drift === 'none', { maxPlaying: max, ...posters, ...anim });
 }
 
 // ------------------------------------------------------------ 3 + 4
